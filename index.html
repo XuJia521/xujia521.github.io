@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f5efe0">
+<title>徐嘉 · 法律工具集</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :root {
+    --bg: #f5efe0;
+    --grid: #ebe4d2;
+    --card: #fbf6e8;
+    --card-border: #ebe3cb;
+    --text: #3a352b;
+    --text-secondary: #86806f;
+    --text-tertiary: #b0a992;
+    --divider: #ede5cc;
+    --accent: #d4a84a;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1a15;
+      --grid: #252219;
+      --card: #2a2619;
+      --card-border: #3a3525;
+      --text: #ede6d1;
+      --text-secondary: #a39a82;
+      --text-tertiary: #6e6857;
+      --divider: #3a3525;
+      --accent: #d4a84a;
+    }
+  }
+
+  html, body {
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 42px 42px;
+    background-position: -1px -1px;
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC",
+                 "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 56px 20px 48px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  h1 {
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(60, 50, 20, 0.03);
+  }
+
+  .tool {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 1px solid var(--divider);
+    transition: background-color 0.15s ease;
+  }
+
+  .tool:last-child {
+    border-bottom: none;
+  }
+
+  .tool:active {
+    background-color: rgba(212, 168, 74, 0.08);
+  }
+
+  @media (hover: hover) {
+    .tool:hover {
+      background-color: rgba(212, 168, 74, 0.06);
+    }
+  }
+
+  .dot {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid var(--text-tertiary);
+    border-radius: 50%;
+    margin-right: 14px;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+  }
+
+  .tool:hover .dot,
+  .tool:active .dot {
+    border-color: var(--accent);
+    background-color: var(--accent);
+  }
+
+  .tool-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .tool-name {
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tool-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .arrow {
+    flex-shrink: 0;
+    margin-left: 12px;
+    color: var(--text-tertiary);
+    font-size: 18px;
+    font-weight: 300;
+  }
+
+  .summary {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+  }
+
+  .summary .indicator {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  footer {
+    margin-top: 40px;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    text-align: center;
+    letter-spacing: 0.03em;
+  }
+
+  footer a {
+    color: var(--text-secondary);
+    text-decoration: none;
+  }
+
+  @media (max-width: 380px) {
+    .container { padding: 44px 14px 36px; }
+    .tool { padding: 14px 16px; }
+    h1 { font-size: 22px; letter-spacing: 0.12em; }
+    .tool-name { font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>法律工具</h1>
+    <p class="subtitle">徐嘉 · 广东卓建（光明）律师事务所</p>
+  </header>
+
+  <nav class="card">
+    <a class="tool" href="https://xujia521.github.io/case-manager/">
+      <span class="dot"></span>
+      <div class="tool-text">
+        <div class="tool-name">案件管理</div>
+        <div class="tool-desc">支持一键拨打法官电话</div>
+      </div>
+      <span class="arrow">›</span>
+    </a>
+
+    <a class="tool" href="https://xujia521.github.io/susongfei/">
+      <span class="dot"></span>
+      <div class="tool-text">
+        <div class="tool-name">诉讼费计算器</div>
+        <div class="tool-desc">按标的额自动计算</div>
+      </div>
+      <span class="arrow">›</span>
+    </a>
+
+    <a class="tool" href="https://xujia521.github.io/lixi/">
+      <span class="dot"></span>
+      <div class="tool-text">
+        <div class="tool-name">利息计算器</div>
+        <div class="tool-desc">LPR 及逾期利息</div>
+      </div>
+      <span class="arrow">›</span>
+    </a>
+
+    <a class="tool" href="https://xujia521.github.io/overtime-pay-calculator/">
+      <span class="dot"></span>
+      <div class="tool-text">
+        <div class="tool-name">加班费计算器</div>
+        <div class="tool-desc">工作日 / 休息日 / 法定假</div>
+      </div>
+      <span class="arrow">›</span>
+    </a>
+
+    <a class="tool" href="https://xujia521.github.io/gongshang/">
+      <span class="dot"></span>
+      <div class="tool-text">
+        <div class="tool-name">工伤计算器</div>
+        <div class="tool-desc">伤残等级及赔偿项目</div>
+      </div>
+      <span class="arrow">›</span>
+    </a>
+
+    <a class="tool" href="https://xujia521.github.io/caijian/">
+      <span class="dot"></span>
+      <div class="tool-text">
+        <div class="tool-name">长截图裁剪</div>
+        <div class="tool-desc">证据打印分页</div>
+      </div>
+      <span class="arrow">›</span>
+    </a>
+
+    <a class="tool" href="https://xujia521.github.io/baoquanfei/">
+      <span class="dot"></span>
+      <div class="tool-text">
+        <div class="tool-name">保全费计算</div>
+        <div class="tool-desc">财产保全申请费</div>
+      </div>
+      <span class="arrow">›</span>
+    </a>
+
+    <a class="tool" href="https://xujia521.github.io/bianqian/">
+      <span class="dot"></span>
+      <div class="tool-text">
+        <div class="tool-name">便签</div>
+        <div class="tool-desc">轻量记录</div>
+      </div>
+      <span class="arrow">›</span>
+    </a>
+
+    <a class="tool" href="https://xujia521.github.io/fee/">
+      <span class="dot"></span>
+      <div class="tool-text">
+        <div class="tool-name">诉讼费用合并计算</div>
+        <div class="tool-desc">多项费用汇总</div>
+      </div>
+      <span class="arrow">›</span>
+    </a>
+  </nav>
+
+  <div class="summary">
+    <span class="indicator"></span>共 9 项工具
+  </div>
+
+  <footer>
+    <a href="https://github.com/xujia521">github.com/xujia521</a>
+  </footer>
+</div>
+</body>
+</html>
