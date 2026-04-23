@@ -3,8 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#f5efe0">
 <title>徐嘉 · 法律工具集</title>
+
+<!-- PWA 基础 -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f5efe0">
+<meta name="description" content="徐嘉律师的常用法律计算与辅助工具集合">
+
+<!-- iOS PWA 支持（iOS 不用 manifest，用这套老接口） -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="法律工具">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+
 <style>
   * {
     margin: 0;
@@ -60,6 +75,8 @@
     max-width: 560px;
     margin: 0 auto;
     padding: 56px 20px 48px;
+    padding-top: calc(56px + env(safe-area-inset-top));
+    padding-bottom: calc(48px + env(safe-area-inset-bottom));
   }
 
   header {
@@ -190,6 +207,74 @@
     text-decoration: none;
   }
 
+  /* 安装提示条（仅 Android Chrome 可能触发） */
+  .install-banner {
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    max-width: 560px;
+    margin: 0 auto;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: none;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 16px rgba(60, 50, 20, 0.1);
+    z-index: 100;
+  }
+
+  .install-banner.show {
+    display: flex;
+    animation: slideUp 0.3s ease;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .install-banner-text {
+    flex: 1;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .install-banner-title {
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .install-banner-desc {
+    color: var(--text-secondary);
+    font-size: 12px;
+    margin-top: 2px;
+  }
+
+  .install-btn {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .install-close {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    padding: 4px 8px;
+  }
+
   @media (max-width: 380px) {
     .container { padding: 44px 14px 36px; }
     .tool { padding: 14px 16px; }
@@ -211,6 +296,15 @@
       <div class="tool-text">
         <div class="tool-name">案件管理</div>
         <div class="tool-desc">支持一键拨打法官电话</div>
+      </div>
+      <span class="arrow">›</span>
+    </a>
+
+    <a class="tool" href="https://xujia521.github.io/susongfei/">
+      <span class="dot"></span>
+      <div class="tool-text">
+        <div class="tool-name">诉讼费计算器</div>
+        <div class="tool-desc">按标的额自动计算</div>
       </div>
       <span class="arrow">›</span>
     </a>
@@ -251,6 +345,15 @@
       <span class="arrow">›</span>
     </a>
 
+    <a class="tool" href="https://xujia521.github.io/baoquanfei/">
+      <span class="dot"></span>
+      <div class="tool-text">
+        <div class="tool-name">保全费计算</div>
+        <div class="tool-desc">财产保全申请费</div>
+      </div>
+      <span class="arrow">›</span>
+    </a>
+
     <a class="tool" href="https://xujia521.github.io/bianqian/">
       <span class="dot"></span>
       <div class="tool-text">
@@ -271,12 +374,66 @@
   </nav>
 
   <div class="summary">
-    <span class="indicator"></span>共 7 项工具
+    <span class="indicator"></span>共 9 项工具
   </div>
 
   <footer>
     <a href="https://github.com/xujia521">github.com/xujia521</a>
   </footer>
 </div>
+
+<!-- 安装提示（安卓 Chrome 会触发 beforeinstallprompt） -->
+<div class="install-banner" id="installBanner">
+  <div class="install-banner-text">
+    <div class="install-banner-title">添加到主屏幕</div>
+    <div class="install-banner-desc">像原生应用一样打开，支持离线访问</div>
+  </div>
+  <button class="install-btn" id="installBtn">安装</button>
+  <button class="install-close" id="installClose" aria-label="关闭">×</button>
+</div>
+
+<script>
+  // 注册 Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch((err) => {
+        console.warn('SW 注册失败:', err);
+      });
+    });
+  }
+
+  // 安卓安装提示
+  let deferredPrompt = null;
+  const banner = document.getElementById('installBanner');
+  const installBtn = document.getElementById('installBtn');
+  const closeBtn = document.getElementById('installClose');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    // 用户此前关闭过就不再弹
+    if (localStorage.getItem('install-dismissed') !== '1') {
+      banner.classList.add('show');
+    }
+  });
+
+  installBtn.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    banner.classList.remove('show');
+  });
+
+  closeBtn.addEventListener('click', () => {
+    banner.classList.remove('show');
+    localStorage.setItem('install-dismissed', '1');
+  });
+
+  // 安装完成后隐藏
+  window.addEventListener('appinstalled', () => {
+    banner.classList.remove('show');
+  });
+</script>
 </body>
 </html>

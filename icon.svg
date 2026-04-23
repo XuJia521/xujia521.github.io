@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbf6e8"/>
+      <stop offset="100%" stop-color="#f0e6c8"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#c89a3a"/>
+      <stop offset="100%" stop-color="#a07820"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+
+  <g fill="url(#gold)">
+    <!-- 顶部圆珠 -->
+    <circle cx="256" cy="130" r="12"/>
+
+    <!-- 立柱 -->
+    <rect x="250" y="140" width="12" height="242" rx="2"/>
+
+    <!-- 横梁 -->
+    <rect x="100" y="160" width="312" height="14" rx="7"/>
+
+    <!-- 左悬吊线 -->
+    <rect x="113" y="172" width="4" height="46"/>
+    <rect x="156" y="172" width="4" height="46"/>
+    <!-- 右悬吊线 -->
+    <rect x="395" y="172" width="4" height="46"/>
+    <rect x="352" y="172" width="4" height="46"/>
+
+    <!-- 左秤盘 (浅碗形) -->
+    <path d="M 82,218 L 190,218 Q 136,268 82,218 Z"/>
+    <!-- 右秤盘 -->
+    <path d="M 322,218 L 430,218 Q 376,268 322,218 Z"/>
+
+    <!-- 底座梯形 -->
+    <path d="M 214,382 L 298,382 L 314,404 L 198,404 Z"/>
+    <!-- 底座横板 -->
+    <rect x="170" y="404" width="172" height="16" rx="4"/>
+  </g>
+</svg>
