@@ -310,42 +310,56 @@
     <div class="section-title">统计基准数据（广东省）</div>
     <div class="card">
       <div class="collapse-header" id="statsHeader">
-        <span class="label">2023年广东省数据</span>
+        <span class="label" id="statsLabel">2025年广东省数据</span>
         <span class="collapse-icon" id="statsIcon">›</span>
       </div>
       <div class="collapse-body" id="statsBody">
         <div class="row">
+          <span class="row-label">数据年份</span>
+          <div class="row-value">
+            <div class="seg" id="statsYearSeg">
+              <button class="seg-btn" data-val="2023">2023</button>
+              <button class="seg-btn" data-val="2024">2024</button>
+              <button class="seg-btn active" data-val="2025">2025</button>
+            </div>
+          </div>
+        </div>
+        <div class="row" id="statsNoteRow" style="display:none">
+          <span class="row-label" style="color:var(--accent-text);font-size:13px">⚠ 2025年数据待核实</span>
+          <div class="row-value" style="font-size:12px;color:var(--text-secondary);text-align:right">以2024年为基准，<br>请对照官方公告更新</div>
+        </div>
+        <div class="row">
           <span class="row-label">城镇居民人均<br>可支配收入</span>
           <div class="row-value">
-            <input type="number" id="urbanIncome" value="52868" min="0">
+            <input type="number" id="urbanIncome" value="" min="0">
             <span class="unit">元/年</span>
           </div>
         </div>
         <div class="row">
           <span class="row-label">农村居民人均<br>可支配收入</span>
           <div class="row-value">
-            <input type="number" id="ruralIncome" value="24012" min="0">
+            <input type="number" id="ruralIncome" value="" min="0">
             <span class="unit">元/年</span>
           </div>
         </div>
         <div class="row">
           <span class="row-label">城镇居民人均<br>消费支出</span>
           <div class="row-value">
-            <input type="number" id="urbanConsumption" value="41516" min="0">
+            <input type="number" id="urbanConsumption" value="" min="0">
             <span class="unit">元/年</span>
           </div>
         </div>
         <div class="row">
           <span class="row-label">农村居民人均<br>消费支出</span>
           <div class="row-value">
-            <input type="number" id="ruralConsumption" value="18777" min="0">
+            <input type="number" id="ruralConsumption" value="" min="0">
             <span class="unit">元/年</span>
           </div>
         </div>
         <div class="row">
           <span class="row-label wide">上年职工日均工资<br><span style="font-size:12px;color:var(--text-tertiary)">用于护理费参考</span></span>
           <div class="row-value">
-            <input type="number" id="dailyWage" value="309" min="0">
+            <input type="number" id="dailyWage" value="" min="0">
             <span class="unit">元/天</span>
           </div>
         </div>
@@ -625,12 +639,15 @@
 </div><!-- .container -->
 
 <script>
-// ── 统计数据默认值 ──
-const DEFAULT_STATS = {
-  urbanIncome: 52868, ruralIncome: 24012,
-  urbanConsumption: 41516, ruralConsumption: 18777,
-  dailyWage: 309
+// ── 历年广东省统计数据 ──
+const YEARLY_STATS = {
+  2023: { urbanIncome: 52868, ruralIncome: 24012, urbanConsumption: 41516, ruralConsumption: 18777, dailyWage: 309 },
+  2024: { urbanIncome: 57698, ruralIncome: 26195, urbanConsumption: 44490, ruralConsumption: 21048, dailyWage: 340 },
+  // 2025年数据尚未内置，以2024年为基准，用户可手动更新
 };
+
+// 默认使用最新已知年份的数据
+const DEFAULT_STATS = YEARLY_STATS[2024];
 
 // ── 交强险限额 ──
 const CTPL = {
@@ -690,6 +707,21 @@ initSeg('ctplSeg', val => {
 });
 
 initSeg('ctplLiabilitySeg', val => { ctplLiability = val; });
+
+// ── 年份选择器 ──
+function applyStatsYear(year) {
+  const data = YEARLY_STATS[year] || YEARLY_STATS[2024];
+  document.getElementById('urbanIncome').value = data.urbanIncome;
+  document.getElementById('ruralIncome').value = data.ruralIncome;
+  document.getElementById('urbanConsumption').value = data.urbanConsumption;
+  document.getElementById('ruralConsumption').value = data.ruralConsumption;
+  document.getElementById('dailyWage').value = data.dailyWage;
+  document.getElementById('statsLabel').textContent = `${year}年广东省数据`;
+  document.getElementById('statsNoteRow').style.display = YEARLY_STATS[year] ? 'none' : '';
+}
+initSeg('statsYearSeg', val => applyStatsYear(parseInt(val)));
+// 页面初始化时应用默认年份（2025）
+applyStatsYear(2025);
 
 // ── 统计数据折叠 ──
 document.getElementById('statsHeader').addEventListener('click', () => {
