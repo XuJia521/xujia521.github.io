@@ -1,42 +1,90 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
+    <!-- 背景：暖奶油渐变 -->
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fbf6e8"/>
-      <stop offset="100%" stop-color="#f0e6c8"/>
+      <stop offset="0%" stop-color="#fef9ee"/>
+      <stop offset="100%" stop-color="#e4cf90"/>
     </linearGradient>
+    <!-- 中心高光：让背景有层次感 -->
+    <radialGradient id="bgGlow" cx="42%" cy="38%" r="55%">
+      <stop offset="0%" stop-color="#fffdf5" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#fffdf5" stop-opacity="0"/>
+    </radialGradient>
+    <!-- 金色主渐变 -->
     <linearGradient id="gold" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#c89a3a"/>
-      <stop offset="100%" stop-color="#a07820"/>
+      <stop offset="0%" stop-color="#e8bc54"/>
+      <stop offset="100%" stop-color="#8c5e0e"/>
     </linearGradient>
+    <!-- 金色高光渐变（用于边缘/顶面） -->
+    <linearGradient id="goldHi" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f8d878"/>
+      <stop offset="100%" stop-color="#c89030"/>
+    </linearGradient>
+    <!-- 整体投影 -->
+    <filter id="shadow" x="-15%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10"
+                    flood-color="#6b3e00" flood-opacity="0.28"/>
+    </filter>
+    <!-- 秤盘投影 -->
+    <filter id="panShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="5" stdDeviation="7"
+                    flood-color="#6b3e00" flood-opacity="0.22"/>
+    </filter>
   </defs>
 
+  <!-- 背景圆角矩形 -->
   <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!-- 背景中心高光 -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGlow)"/>
 
-  <g fill="url(#gold)">
-    <!-- 顶部圆珠 -->
-    <circle cx="256" cy="130" r="12"/>
+  <!-- ── 天平主体（带整体投影） ── -->
+  <g filter="url(#shadow)">
+
+    <!-- 顶部圆球装饰 -->
+    <circle cx="256" cy="120" r="18" fill="url(#goldHi)"/>
+    <circle cx="256" cy="120" r="10" fill="url(#gold)"/>
 
     <!-- 立柱 -->
-    <rect x="250" y="140" width="12" height="242" rx="2"/>
+    <rect x="248" y="136" width="16" height="242" rx="4" fill="url(#gold)"/>
+    <!-- 立柱高光边 -->
+    <rect x="248" y="136" width="5" height="242" rx="2" fill="url(#goldHi)" opacity="0.55"/>
 
     <!-- 横梁 -->
-    <rect x="100" y="160" width="312" height="14" rx="7"/>
+    <rect x="96" y="164" width="320" height="20" rx="10" fill="url(#gold)"/>
+    <!-- 横梁顶面高光 -->
+    <rect x="96" y="164" width="320" height="7" rx="4" fill="url(#goldHi)" opacity="0.5"/>
 
-    <!-- 左悬吊线 -->
-    <rect x="113" y="172" width="4" height="46"/>
-    <rect x="156" y="172" width="4" height="46"/>
-    <!-- 右悬吊线 -->
-    <rect x="395" y="172" width="4" height="46"/>
-    <rect x="352" y="172" width="4" height="46"/>
+    <!-- 左侧悬链（2根） -->
+    <rect x="113" y="184" width="5" height="54" rx="2" fill="url(#gold)"/>
+    <rect x="160" y="184" width="5" height="54" rx="2" fill="url(#gold)"/>
 
-    <!-- 左秤盘 (浅碗形) -->
-    <path d="M 82,218 L 190,218 Q 136,268 82,218 Z"/>
-    <!-- 右秤盘 -->
-    <path d="M 322,218 L 430,218 Q 376,268 322,218 Z"/>
+    <!-- 右侧悬链（2根） -->
+    <rect x="347" y="184" width="5" height="54" rx="2" fill="url(#gold)"/>
+    <rect x="394" y="184" width="5" height="54" rx="2" fill="url(#gold)"/>
 
-    <!-- 底座梯形 -->
-    <path d="M 214,382 L 298,382 L 314,404 L 198,404 Z"/>
-    <!-- 底座横板 -->
-    <rect x="170" y="404" width="172" height="16" rx="4"/>
+  </g>
+
+  <!-- 左秤盘（单独投影，以便从背景中分离） -->
+  <g filter="url(#panShadow)">
+    <!-- 盘碗弧形填充 -->
+    <path d="M 92,238 L 200,238 Q 146,296 92,238 Z" fill="url(#gold)"/>
+    <!-- 盘口高光横条 -->
+    <rect x="88" y="230" width="116" height="12" rx="6" fill="url(#goldHi)"/>
+  </g>
+
+  <!-- 右秤盘 -->
+  <g filter="url(#panShadow)">
+    <path d="M 312,238 L 420,238 Q 366,296 312,238 Z" fill="url(#gold)"/>
+    <rect x="308" y="230" width="116" height="12" rx="6" fill="url(#goldHi)"/>
+  </g>
+
+  <!-- 底座 -->
+  <g filter="url(#shadow)">
+    <!-- 底座锥台 -->
+    <path d="M 208,378 L 304,378 L 322,404 L 190,404 Z" fill="url(#gold)"/>
+    <!-- 底板 -->
+    <rect x="172" y="402" width="168" height="20" rx="6" fill="url(#gold)"/>
+    <!-- 底板顶面高光 -->
+    <rect x="172" y="402" width="168" height="7" rx="4" fill="url(#goldHi)" opacity="0.45"/>
   </g>
 </svg>
