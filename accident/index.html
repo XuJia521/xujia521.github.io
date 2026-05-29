@@ -755,7 +755,7 @@ function renderExtraDisabilities() {
 // ── 被扶养人 ──
 document.getElementById('addDependentBtn').addEventListener('click', () => {
   depIdCounter++;
-  dependents.push({ id: depIdCounter, type: 'minor', age: 10, guardians: 1 });
+  dependents.push({ id: depIdCounter, type: 'minor', age: 10, guardians: 0 });
   renderDependents();
 });
 
@@ -983,33 +983,35 @@ function calculate() {
   const liabilityRatio = Math.min(100, Math.max(0, g('liabilityRatio'))) / 100;
   const afterLiability = subtotal * liabilityRatio;
 
-  // ── 交强险 ──
+  // ── 交强险（从全额损失计算，不乘责任比例） ──
   let ctplDeathPaid = 0, ctplMedicalPaid = 0, ctplPropertyPaid = 0;
   let ctplTotal = 0;
   if (ctplHas) {
     const limits = CTPL[ctplLiability];
-    // 死亡/伤残部分（含精神损害、被扶养人等）
-    const deathPart = (disabilityComp + deathComp + depLivingFee + spiritualDamage) * liabilityRatio;
-    ctplDeathPaid = Math.min(deathPart, limits.death);
-    // 医疗部分
-    const medPart = (medicalFee + futureMedical + hospitalMeal + nutritionFee + nursingFee + aidFee) * liabilityRatio;
-    ctplMedicalPaid = Math.min(medPart, limits.medical);
-    // 财产损失
-    const propPart = (propertyLoss) * liabilityRatio;
-    ctplPropertyPaid = Math.min(propPart, limits.property);
+    // 医疗费用限额：仅含直接医疗费（挂号、治疗、药费等）
+    const ctplMedSource = medicalFee + futureMedical;
+    ctplMedicalPaid = Math.min(ctplMedSource, limits.medical);
+    // 死亡/伤残限额：其余所有人身损害项目（护理费、误工费、伙食补助、营养费、辅助器具等均归此桶）
+    const ctplDeathSource = hospitalMeal + nutritionFee + nursingFee + lostWorkFee +
+                            aidFee + transportFee + accommodationFee +
+                            disabilityComp + deathComp + funeralFee +
+                            depLivingFee + spiritualDamage;
+    ctplDeathPaid = Math.min(ctplDeathSource, limits.death);
+    // 财产损失限额
+    ctplPropertyPaid = Math.min(propertyLoss, limits.property);
     ctplTotal = ctplDeathPaid + ctplMedicalPaid + ctplPropertyPaid;
   }
 
-  // ── 商业险 ──
+  // ── 商业险（覆盖"扣除交强险后×责任比例"的被告份额） ──
   const commercialLimit = g('commercialInsLimit');
+  const defLiability = Math.max(0, subtotal - ctplTotal) * liabilityRatio;
   let commercialPaid = 0;
   if (commercialLimit > 0) {
-    const remaining = afterLiability - ctplTotal;
-    commercialPaid = Math.min(Math.max(0, remaining), commercialLimit);
+    commercialPaid = Math.min(defLiability, commercialLimit);
   }
 
   // ── 被告承担 ──
-  const defendantOwes = Math.max(0, afterLiability - ctplTotal - commercialPaid);
+  const defendantOwes = Math.max(0, defLiability - commercialPaid);
 
   // ── 渲染结果 ──
   const section = document.getElementById('resultSection');
@@ -1051,10 +1053,10 @@ function calculate() {
     <span class="amount">¥ ${fmt(subtotal)}</span>
   </div>`;
 
-  if (liabilityRatio < 1) {
+  if (liabilityRatio < 1 && ctplTotal < subtotal) {
     detailHTML += `<div class="result-ins">
-      <span class="label">按责任比例 ${Math.round(liabilityRatio*100)}% 调整后</span>
-      <span class="amount">¥ ${fmt(afterLiability)}</span>
+      <span class="label">扣除交强险后余额 × ${Math.round(liabilityRatio*100)}% 责任比例</span>
+      <span class="amount">¥ ${fmt(defLiability)}</span>
     </div>`;
   }
 
