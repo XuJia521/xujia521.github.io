@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>工伤赔偿计算器</title>
+<meta name="description" content="深圳地区工伤伤残（1-10级）及治疗期待遇赔偿金额计算工具">
+<meta name="theme-color" content="#f5efe0">
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --bg: #f5efe0;
+    --grid: #ebe4d2;
+    --card: #fbf6e8;
+    --card-border: #ebe3cb;
+    --text: #3a352b;
+    --text-secondary: #86806f;
+    --text-tertiary: #b0a992;
+    --divider: #ede5cc;
+    --accent: #d4a84a;
+    --accent-light: rgba(212,168,74,0.12);
+    --accent-text: #a07a20;
+    --danger: #c0392b;
+    --danger-light: rgba(192,57,43,0.1);
+    --fund: #2d7d6f;
+    --fund-light: rgba(45,125,111,0.12);
+    --employer: #b06a2c;
+    --employer-light: rgba(176,106,44,0.12);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1a15; --grid: #252219; --card: #2a2619; --card-border: #3a3525;
+      --text: #ede6d1; --text-secondary: #a39a82; --text-tertiary: #6e6857;
+      --divider: #3a3525; --accent: #d4a84a; --accent-text: #e8c06a;
+      --accent-light: rgba(212,168,74,0.15); --danger: #e05a4a;
+      --danger-light: rgba(224,90,74,0.12);
+      --fund: #4ec3b0; --fund-light: rgba(78,195,176,0.14);
+      --employer: #d99a5a; --employer-light: rgba(217,154,90,0.14);
+    }
+  }
+
+  html, body {
+    background-color: var(--bg);
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 42px 42px; background-position: -1px -1px;
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px; line-height: 1.5;
+    -webkit-font-smoothing: antialiased; min-height: 100vh;
+  }
+
+  .container {
+    max-width: 560px; margin: 0 auto;
+    padding: 56px 16px 80px;
+    padding-top: calc(52px + env(safe-area-inset-top));
+    padding-bottom: calc(80px + env(safe-area-inset-bottom));
+  }
+
+  /* ── Top bar ── */
+  .top-bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    background: rgba(245,239,224,0.92);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid var(--card-border);
+    padding-top: env(safe-area-inset-top);
+  }
+  @media (prefers-color-scheme: dark) { .top-bar { background: rgba(28,26,21,0.92); } }
+  .top-bar-inner {
+    max-width: 560px; margin: 0 auto;
+    display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+  }
+  .back-btn {
+    color: var(--accent-text); font-size: 15px; text-decoration: none;
+    padding: 4px 0; display: flex; align-items: center; gap: 4px; flex-shrink: 0;
+  }
+  .top-bar-title { font-size: 17px; font-weight: 500; letter-spacing: 0.02em; }
+
+  /* ── Section ── */
+  .section { margin-bottom: 16px; }
+  .section-title {
+    font-size: 12px; font-weight: 500;
+    color: var(--text-secondary); letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 8px; padding: 0 4px;
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 18px; overflow: hidden;
+    box-shadow: 0 1px 2px rgba(60,50,20,0.04);
+  }
+
+  /* ── Row ── */
+  .row {
+    display: flex; align-items: center;
+    padding: 11px 16px; border-bottom: 1px solid var(--divider); gap: 12px;
+  }
+  .row:last-child { border-bottom: none; }
+  .row-label { font-size: 15px; flex-shrink: 0; min-width: 124px; color: var(--text); }
+  .row-label .sub { display: block; font-size: 12px; color: var(--text-tertiary); }
+  .row-value { flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+
+  /* ── Inputs ── */
+  input[type=number], input[type=text], select {
+    background: transparent; border: none; outline: none;
+    color: var(--text); font-size: 15px; font-family: inherit;
+    text-align: right; width: 100%; min-width: 0;
+    -moz-appearance: textfield; appearance: textfield;
+  }
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+  input::placeholder { color: var(--text-tertiary); }
+  select { text-align-last: right; cursor: pointer; }
+  option { background: var(--card); }
+  .unit { font-size: 13px; color: var(--text-secondary); flex-shrink: 0; }
+
+  /* ── Hint ── */
+  .hint-row {
+    padding: 9px 16px; font-size: 12px; line-height: 1.5;
+    color: var(--text-secondary); border-bottom: 1px solid var(--divider);
+    background: var(--accent-light);
+  }
+  .hint-row.warn { color: var(--accent-text); }
+  .hint-row:last-child { border-bottom: none; }
+
+  /* ── Segment control ── */
+  .seg { display: flex; background: var(--divider); border-radius: 8px; padding: 2px; gap: 2px; }
+  .seg-btn {
+    flex: 1; padding: 5px 8px; font-size: 13px; text-align: center;
+    border: none; background: transparent; color: var(--text-secondary);
+    border-radius: 6px; cursor: pointer; font-family: inherit; transition: all 0.15s; white-space: nowrap;
+  }
+  .seg-btn.active {
+    background: var(--card); color: var(--text); font-weight: 500;
+    box-shadow: 0 1px 3px rgba(60,50,20,0.1);
+  }
+
+  /* ── Collapsible ── */
+  .collapse-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 13px 16px; cursor: pointer; user-select: none;
+  }
+  .collapse-header .label { font-size: 15px; font-weight: 500; }
+  .collapse-header .label .sub { font-size: 12px; color: var(--text-tertiary); font-weight: 400; margin-left: 6px; }
+  .collapse-icon { font-size: 18px; color: var(--text-tertiary); transition: transform 0.2s; }
+  .collapse-icon.open { transform: rotate(90deg); }
+  .collapse-body { display: none; border-top: 1px solid var(--divider); }
+  .collapse-body.open { display: block; }
+
+  /* ── Calculate button ── */
+  .calc-btn {
+    width: 100%; padding: 15px;
+    background: var(--accent); color: #fff;
+    border: none; border-radius: 16px;
+    font-size: 17px; font-weight: 600; font-family: inherit; letter-spacing: 0.04em;
+    cursor: pointer; margin-top: 8px; transition: opacity 0.15s, transform 0.1s;
+  }
+  .calc-btn:active { opacity: 0.85; transform: scale(0.99); }
+  @media (hover: hover) { .calc-btn:hover { opacity: 0.9; } }
+
+  /* ── Results ── */
+  .result-section { display: none; margin-top: 16px; }
+  .result-section.show { display: block; }
+  .result-title {
+    font-size: 13px; font-weight: 500; letter-spacing: 0.08em;
+    color: var(--text-secondary); margin-bottom: 8px; padding: 0 4px;
+  }
+  .result-item {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 11px 16px; border-bottom: 1px solid var(--divider); gap: 10px;
+  }
+  .result-item:last-child { border-bottom: none; }
+  .result-label { font-size: 14px; color: var(--text); flex: 1; }
+  .result-label .calc { display: block; font-size: 12px; color: var(--text-tertiary); margin-top: 2px; }
+  .result-amount { font-size: 15px; font-weight: 500; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .payer {
+    display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 6px;
+    margin-left: 6px; vertical-align: middle; font-weight: 500;
+  }
+  .payer.fund { color: var(--fund); background: var(--fund-light); }
+  .payer.employer { color: var(--employer); background: var(--employer-light); }
+
+  .result-total {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 16px; border-top: 2px solid var(--divider);
+  }
+  .result-total .label { font-size: 16px; font-weight: 600; }
+  .result-total .amount { font-size: 20px; font-weight: 700; color: var(--accent-text); font-variant-numeric: tabular-nums; }
+
+  .final-claim {
+    background: var(--accent-light); border: 1px solid var(--accent);
+    border-radius: 14px; padding: 14px 16px; margin-top: 16px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .final-claim .label { font-size: 15px; font-weight: 500; }
+  .final-claim .amount { font-size: 22px; font-weight: 700; color: var(--accent-text); font-variant-numeric: tabular-nums; }
+
+  .empty-tip { padding: 14px 16px; font-size: 14px; color: var(--text-tertiary); text-align: center; }
+
+  .note { font-size: 12px; color: var(--text-tertiary); padding: 12px 4px; line-height: 1.7; }
+  .note b { color: var(--text-secondary); font-weight: 500; }
+
+  @media (max-width: 380px) {
+    .container { padding: 52px 12px 72px; }
+    .row-label { min-width: 104px; font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <a class="back-btn" href="https://xujia521.github.io/">‹ 工具集</a>
+    <span class="top-bar-title">工伤赔偿计算器</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- 计算基数 -->
+  <div class="section">
+    <div class="section-title">计算基数</div>
+    <div class="card">
+      <div class="row">
+        <span class="row-label">本人工资<span class="sub">工伤前12个月平均月缴费工资</span></span>
+        <div class="row-value">
+          <input type="number" id="ownWage" value="" placeholder="必填" min="0">
+          <span class="unit">元/月</span>
+        </div>
+      </div>
+      <div class="row">
+        <span class="row-label">深圳社平工资<span class="sub">上年度职工月平均工资，封顶/托底用</span></span>
+        <div class="row-value">
+          <input type="number" id="avgWage" value="" placeholder="需要时填" min="0">
+          <span class="unit">元/月</span>
+        </div>
+      </div>
+      <div class="hint-row" id="baseHint">填写社平工资后，本人工资将自动按上限（社平×300%）、下限（社平×60%）修正。</div>
+    </div>
+  </div>
+
+  <!-- 伤残等级 -->
+  <div class="section">
+    <div class="section-title">伤残等级</div>
+    <div class="card">
+      <div class="row">
+        <span class="row-label">伤残等级</span>
+        <div class="row-value">
+          <select id="level">
+            <option value="10">十级</option>
+            <option value="9">九级</option>
+            <option value="8">八级</option>
+            <option value="7">七级</option>
+            <option value="6">六级</option>
+            <option value="5">五级</option>
+            <option value="4">四级</option>
+            <option value="3">三级</option>
+            <option value="2">二级</option>
+            <option value="1">一级</option>
+          </select>
+        </div>
+      </div>
+      <div class="row" id="terminateRow">
+        <span class="row-label">劳动关系<span class="sub">5-10级一次性补助前提</span></span>
+        <div class="row-value">
+          <div class="seg" id="terminateSeg">
+            <button class="seg-btn active" data-val="yes">已解除/终止</button>
+            <button class="seg-btn" data-val="no">仍在职</button>
+          </div>
+        </div>
+      </div>
+      <div class="hint-row" id="levelHint"></div>
+    </div>
+  </div>
+
+  <!-- 治疗期及护理 -->
+  <div class="section">
+    <div class="section-title">治疗期及护理（按需填写）</div>
+    <div class="card">
+      <div class="collapse-header" id="extraHeader">
+        <span class="label">展开填写<span class="sub">停工留薪 / 护理 / 伙食 / 实报费用</span></span>
+        <span class="collapse-icon" id="extraIcon">›</span>
+      </div>
+      <div class="collapse-body" id="extraBody">
+        <div class="row">
+          <span class="row-label">停工留薪期<span class="sub">原工资福利不变，一般≤12个月</span></span>
+          <div class="row-value">
+            <input type="number" id="paidLeaveMonths" value="" placeholder="月数" min="0" style="max-width:64px">
+            <span class="unit">月 ×</span>
+            <input type="number" id="paidLeaveWage" value="" placeholder="原月工资" min="0" style="max-width:96px">
+            <span class="unit">元</span>
+          </div>
+        </div>
+        <div class="row">
+          <span class="row-label">生活护理费<span class="sub">评定生活自理障碍等级后按月发</span></span>
+          <div class="row-value">
+            <select id="careLevel">
+              <option value="0">无</option>
+              <option value="0.5">完全不能自理（社平50%）</option>
+              <option value="0.4">大部分不能自理（社平40%）</option>
+              <option value="0.3">部分不能自理（社平30%）</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <span class="row-label">住院伙食补助<span class="sub">深圳无统一单价，自行填写</span></span>
+          <div class="row-value">
+            <input type="number" id="mealDays" value="" placeholder="天数" min="0" style="max-width:64px">
+            <span class="unit">天 ×</span>
+            <input type="number" id="mealRate" value="" placeholder="元/天" min="0" style="max-width:84px">
+            <span class="unit">元</span>
+          </div>
+        </div>
+        <div class="row">
+          <span class="row-label">医疗费</span>
+          <div class="row-value"><input type="number" id="medicalFee" value="" placeholder="0" min="0"><span class="unit">元</span></div>
+        </div>
+        <div class="row">
+          <span class="row-label">康复费</span>
+          <div class="row-value"><input type="number" id="rehabFee" value="" placeholder="0" min="0"><span class="unit">元</span></div>
+        </div>
+        <div class="row">
+          <span class="row-label">辅助器具费</span>
+          <div class="row-value"><input type="number" id="aidFee" value="" placeholder="0" min="0"><span class="unit">元</span></div>
+        </div>
+        <div class="row">
+          <span class="row-label">异地就医<br>交通食宿费</span>
+          <div class="row-value"><input type="number" id="travelFee" value="" placeholder="0" min="0"><span class="unit">元</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="calc-btn" id="calcBtn">计算工伤待遇</button>
+
+  <!-- 结果 -->
+  <div class="result-section" id="resultSection">
+
+    <div class="result-title" style="margin-top:24px">一次性待遇</div>
+    <div class="card" id="resultOnce"></div>
+
+    <div class="result-title" style="margin-top:16px" id="monthlyTitle">按月领取待遇</div>
+    <div class="card" id="resultMonthly"></div>
+
+    <div class="final-claim" id="resultFinal"></div>
+
+    <p class="note" id="resultNote"></p>
+  </div>
+
+</div><!-- .container -->
+
+<script>
+// ── 标准数据（《广东省工伤保险条例》，深圳适用）──
+// 一次性伤残补助金（本人工资·月数）
+const M_DISABILITY = { 1:27, 2:25, 3:23, 4:21, 5:18, 6:16, 7:13, 8:11, 9:9, 10:7 };
+// 伤残津贴（本人工资·按月比例），1-6级
+const R_PENSION = { 1:0.90, 2:0.85, 3:0.80, 4:0.75, 5:0.70, 6:0.60 };
+// 一次性工伤医疗补助金（本人工资·月数），5-10级，解除劳动关系时
+const M_MEDICAL = { 5:10, 6:8, 7:6, 8:4, 9:2, 10:1 };
+// 一次性伤残就业补助金（本人工资·月数），5-10级，解除劳动关系时
+const M_EMPLOY = { 5:50, 6:40, 7:25, 8:15, 9:8, 10:4 };
+const CN = { 1:'一', 2:'二', 3:'三', 4:'四', 5:'五', 6:'六', 7:'七', 8:'八', 9:'九', 10:'十' };
+
+let terminated = true;  // 5-10级是否已解除/终止劳动关系
+
+// ── 工具函数 ──
+const num = id => { const v = parseFloat(document.getElementById(id).value); return isNaN(v) || v < 0 ? 0 : v; };
+const fmt = n => Math.round(n).toLocaleString('zh-CN');
+const FUND = '<span class="payer fund">工伤基金</span>';
+const EMP = '<span class="payer employer">用人单位</span>';
+
+// ── 段控 ──
+function initSeg(id, cb) {
+  const seg = document.getElementById(id);
+  seg.querySelectorAll('.seg-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      seg.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      cb(btn.dataset.val);
+    });
+  });
+}
+initSeg('terminateSeg', val => { terminated = val === 'yes'; });
+
+// ── 折叠 ──
+document.getElementById('extraHeader').addEventListener('click', () => {
+  document.getElementById('extraBody').classList.toggle('open');
+  document.getElementById('extraIcon').classList.toggle('open');
+});
+
+// ── 等级联动提示 ──
+function updateLevelUI() {
+  const L = parseInt(document.getElementById('level').value);
+  const tRow = document.getElementById('terminateRow');
+  const hint = document.getElementById('levelHint');
+  // 1-4级保留劳动关系，无"解除"选项
+  tRow.style.display = (L >= 5) ? '' : 'none';
+  if (L <= 4) {
+    hint.innerHTML = `${CN[L]}级：一次性伤残补助金 ${M_DISABILITY[L]} 个月 + 伤残津贴按月 ${R_PENSION[L]*100}%（保留劳动关系、退出工作岗位，由工伤基金支付）。`;
+  } else if (L <= 6) {
+    hint.innerHTML = `${CN[L]}级：一次性伤残补助金 ${M_DISABILITY[L]} 个月。<b>已解除/终止</b>→领一次性工伤医疗补助金 ${M_MEDICAL[L]} 个月＋伤残就业补助金 ${M_EMPLOY[L]} 个月；<b>仍在职</b>且单位难以安排工作→由单位按月发伤残津贴 ${R_PENSION[L]*100}%。`;
+  } else {
+    hint.innerHTML = `${CN[L]}级：一次性伤残补助金 ${M_DISABILITY[L]} 个月。解除/终止劳动关系时另领一次性工伤医疗补助金 ${M_MEDICAL[L]} 个月＋伤残就业补助金 ${M_EMPLOY[L]} 个月。`;
+  }
+}
+document.getElementById('level').addEventListener('change', updateLevelUI);
+updateLevelUI();
+
+// ── 基数修正 ──
+function correctedBase() {
+  const own = num('ownWage');
+  const avg = num('avgWage');
+  let base = own, status = '';
+  if (avg > 0) {
+    const cap = avg * 3, floor = avg * 0.6;
+    if (own > cap) { base = cap; status = `已封顶（社平×300% = ${fmt(cap)}）`; }
+    else if (own > 0 && own < floor) { base = floor; status = `已托底（社平×60% = ${fmt(floor)}）`; }
+  }
+  return { base, status };
+}
+
+// ── 计算 ──
+document.getElementById('calcBtn').addEventListener('click', () => {
+  const L = parseInt(document.getElementById('level').value);
+  const { base, status } = correctedBase();
+  const avg = num('avgWage');
+
+  if (base <= 0) {
+    alert('请先填写本人工资');
+    return;
+  }
+
+  const once = [];     // {label, calc, amount, payer}
+  const monthly = [];  // {label, calc, amount, payer}
+
+  // 1) 一次性伤残补助金
+  once.push({
+    label: '一次性伤残补助金',
+    calc: `${M_DISABILITY[L]}个月 × ${fmt(base)}`,
+    amount: base * M_DISABILITY[L], payer: FUND
+  });
+
+  // 2) 5-10级一次性两金 / 或 5-6级在职按月津贴
+  if (L >= 5) {
+    if (terminated) {
+      once.push({
+        label: '一次性工伤医疗补助金',
+        calc: `${M_MEDICAL[L]}个月 × ${fmt(base)}`,
+        amount: base * M_MEDICAL[L], payer: FUND
+      });
+      once.push({
+        label: '一次性伤残就业补助金',
+        calc: `${M_EMPLOY[L]}个月 × ${fmt(base)}`,
+        amount: base * M_EMPLOY[L], payer: EMP
+      });
+    } else if (L <= 6) {
+      monthly.push({
+        label: '伤残津贴',
+        calc: `${fmt(base)} × ${R_PENSION[L]*100}%（单位难以安排工作时）`,
+        amount: base * R_PENSION[L], payer: EMP
+      });
+    }
+  }
+
+  // 3) 1-4级伤残津贴（按月，工伤基金）
+  if (L <= 4) {
+    monthly.push({
+      label: '伤残津贴',
+      calc: `${fmt(base)} × ${R_PENSION[L]*100}%`,
+      amount: base * R_PENSION[L], payer: FUND
+    });
+  }
+
+  // 4) 治疗期及护理
+  const plMonths = num('paidLeaveMonths'), plWage = num('paidLeaveWage');
+  if (plMonths > 0 && plWage > 0) {
+    once.push({
+      label: '停工留薪期工资',
+      calc: `${plMonths}个月 × ${fmt(plWage)}`,
+      amount: plMonths * plWage, payer: EMP
+    });
+  }
+
+  const careRatio = parseFloat(document.getElementById('careLevel').value) || 0;
+  if (careRatio > 0) {
+    if (avg > 0) {
+      monthly.push({
+        label: '生活护理费',
+        calc: `社平 ${fmt(avg)} × ${careRatio*100}%`,
+        amount: avg * careRatio, payer: FUND
+      });
+    } else {
+      monthly.push({
+        label: '生活护理费',
+        calc: `需填写社平工资才能计算（社平 × ${careRatio*100}%）`,
+        amount: 0, payer: FUND
+      });
+    }
+  }
+
+  const mealDays = num('mealDays'), mealRate = num('mealRate');
+  if (mealDays > 0 && mealRate > 0) {
+    once.push({
+      label: '住院伙食补助费',
+      calc: `${mealDays}天 × ${fmt(mealRate)}`,
+      amount: mealDays * mealRate, payer: FUND
+    });
+  }
+
+  const reimburse = [
+    ['医疗费', num('medicalFee')],
+    ['康复费', num('rehabFee')],
+    ['辅助器具费', num('aidFee')],
+    ['异地就医交通食宿费', num('travelFee')]
+  ];
+  reimburse.forEach(([label, v]) => {
+    if (v > 0) once.push({ label, calc: '据实报销', amount: v, payer: FUND });
+  });
+
+  render(once, monthly, status);
+});
+
+function render(once, monthly, status) {
+  // 一次性
+  const onceEl = document.getElementById('resultOnce');
+  let onceTotal = 0;
+  let html = '';
+  once.forEach(it => {
+    onceTotal += it.amount;
+    html += `<div class="result-item">
+      <span class="result-label">${it.label}${it.payer}<span class="calc">${it.calc}</span></span>
+      <span class="result-amount">${fmt(it.amount)}</span>
+    </div>`;
+  });
+  html += `<div class="result-total"><span class="label">一次性合计</span><span class="amount">${fmt(onceTotal)} 元</span></div>`;
+  onceEl.innerHTML = html;
+
+  // 按月
+  const monthlyTitle = document.getElementById('monthlyTitle');
+  const monthlyEl = document.getElementById('resultMonthly');
+  if (monthly.length) {
+    monthlyTitle.style.display = '';
+    monthlyEl.style.display = '';
+    monthlyEl.innerHTML = monthly.map(it => `<div class="result-item">
+      <span class="result-label">${it.label}${it.payer}<span class="calc">${it.calc}</span></span>
+      <span class="result-amount">${it.amount > 0 ? fmt(it.amount) + ' / 月' : '—'}</span>
+    </div>`).join('');
+  } else {
+    monthlyTitle.style.display = 'none';
+    monthlyEl.style.display = 'none';
+  }
+
+  // 高亮
+  document.getElementById('resultFinal').innerHTML =
+    `<span class="label">一次性待遇合计</span><span class="amount">${fmt(onceTotal)} 元</span>`;
+
+  // 备注
+  const note = document.getElementById('resultNote');
+  note.innerHTML =
+    (status ? `<b>基数提示：</b>${status}。<br>` : '') +
+    `标签 ${FUND} / ${EMP} 表示该项法定付款主体。按月项目（伤残津贴、生活护理费）为长期待遇，未计入一次性合计。<br>` +
+    `本计算器依据《广东省工伤保险条例》整理，仅供参考，最终以工伤认定、劳动能力鉴定结论及主管部门/裁决为准。`;
+
+  document.getElementById('resultSection').classList.add('show');
+  document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+</body>
+</html>
