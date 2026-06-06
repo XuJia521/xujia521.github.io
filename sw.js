@@ -1,5 +1,5 @@
 // Service Worker - 离线缓存
-const CACHE_NAME = 'xujia-legal-tools-v4';
+const CACHE_NAME = 'xujia-legal-tools-v5';
 const ASSETS = [
   './',
   './index.html',
@@ -8,6 +8,9 @@ const ASSETS = [
   './home.js',
   './pgh/',
   './pgh/index.html',
+  './pgh/manifest.json',
+  './icon-maskable-192.png',
+  './icon-maskable-512.png',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
