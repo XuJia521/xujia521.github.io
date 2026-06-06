@@ -1,0 +1,326 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  --bg: #f5efe0;
+  --grid: #ebe4d2;
+  --card: #fbf6e8;
+  --card-border: #ebe3cb;
+  --text: #3a352b;
+  --text-secondary: #86806f;
+  --text-tertiary: #b0a992;
+  --divider: #ede5cc;
+  --accent: #d4a84a;
+  --accent-deep: #b8893a;
+  --accent-soft: rgba(212, 168, 74, 0.12);
+  --card-shadow: 0 1px 2px rgba(60, 50, 20, 0.04), 0 8px 24px rgba(60, 50, 20, 0.05);
+  --icon-tint: rgba(212, 168, 74, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1a15;
+    --grid: #252219;
+    --card: #2a2619;
+    --card-border: #3a3525;
+    --text: #ede6d1;
+    --text-secondary: #a39a82;
+    --text-tertiary: #6e6857;
+    --divider: #3a3525;
+    --accent: #e0b455;
+    --accent-deep: #e0b455;
+    --accent-soft: rgba(224, 180, 85, 0.14);
+    --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 8px 28px rgba(0, 0, 0, 0.28);
+    --icon-tint: rgba(224, 180, 85, 0.12);
+  }
+}
+
+html, body {
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 42px 42px;
+  background-position: -1px -1px;
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC",
+               "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 56px 20px 48px;
+  padding-top: calc(56px + env(safe-area-inset-top));
+  padding-bottom: calc(48px + env(safe-area-inset-bottom));
+}
+
+header {
+  text-align: center;
+  margin-bottom: 34px;
+  animation: fadeDown 0.5s ease both;
+}
+
+.seal {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 16px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    linear-gradient(145deg, var(--accent), var(--accent-deep));
+  box-shadow: 0 6px 16px rgba(180, 137, 58, 0.28);
+  font-size: 24px;
+  font-weight: 600;
+  color: #fff8e8;
+  letter-spacing: 0;
+}
+
+h1 {
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+}
+
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+}
+
+.tool {
+  display: flex;
+  align-items: center;
+  padding: 15px 18px;
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: 1px solid var(--divider);
+  transition: background-color 0.18s ease;
+  position: relative;
+  opacity: 0;
+  animation: rowIn 0.45s ease forwards;
+}
+
+.tool:last-child {
+  border-bottom: none;
+}
+
+.tool:active {
+  background-color: var(--accent-soft);
+}
+
+@media (hover: hover) {
+  .tool:hover {
+    background-color: var(--accent-soft);
+  }
+}
+
+@keyframes rowIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.icon {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  margin-right: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--icon-tint);
+  color: var(--accent-deep);
+  transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.icon svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+.tool:hover .icon,
+.tool:active .icon {
+  background: linear-gradient(145deg, var(--accent), var(--accent-deep));
+  color: #fff8e8;
+  transform: scale(1.05);
+}
+
+.tool-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.tool-name {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tool-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.arrow {
+  flex-shrink: 0;
+  margin-left: 12px;
+  color: var(--text-tertiary);
+  font-size: 18px;
+  font-weight: 300;
+  transition: transform 0.18s ease, color 0.18s ease;
+}
+
+.tool:hover .arrow,
+.tool:active .arrow {
+  color: var(--accent-deep);
+  transform: translateX(3px);
+}
+
+.summary {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+}
+
+.summary .indicator {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+footer {
+  margin-top: 40px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  text-align: center;
+  letter-spacing: 0.03em;
+}
+
+footer a {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+/* 安装提示条（仅 Android Chrome 可能触发） */
+.install-banner {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  max-width: 560px;
+  margin: 0 auto;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: none;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 16px rgba(60, 50, 20, 0.1);
+  z-index: 100;
+}
+
+.install-banner.show {
+  display: flex;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.install-banner-text {
+  flex: 1;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.install-banner-title {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.install-banner-desc {
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.install-btn {
+  flex-shrink: 0;
+  padding: 8px 14px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.install-close {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+@media (max-width: 380px) {
+  .container { padding: 44px 14px 36px; }
+  .tool { padding: 13px 14px; }
+  h1 { font-size: 22px; letter-spacing: 0.12em; }
+  .tool-name { font-size: 15px; }
+  .icon { width: 34px; height: 34px; margin-right: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  header, .tool { animation: none; opacity: 1; }
+}
