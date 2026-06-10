@@ -85,6 +85,12 @@ header {
   font-weight: 600;
   color: #fff8e8;
   letter-spacing: 0;
+  text-decoration: none;
+  transition: transform 0.15s ease;
+}
+
+a.seal:active {
+  transform: scale(0.94);
 }
 
 h1 {
