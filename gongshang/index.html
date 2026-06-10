@@ -105,6 +105,12 @@
   .row-label .sub { display: block; font-size: 12px; color: var(--text-tertiary); }
   .row-value { flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
 
+  /* 双输入行：标签与输入框上下分层，避免移动端挤压重叠 */
+  .row.stack { flex-wrap: wrap; }
+  .row.stack .row-label { min-width: 0; }
+  .row.stack .row-value { flex: 1 1 100%; }
+  .row.stack input { background: var(--divider); border-radius: 8px; padding: 6px 10px; }
+
   /* ── Inputs ── */
   input[type=number], input[type=text], select {
     background: transparent; border: none; outline: none;
@@ -300,12 +306,12 @@
         <span class="collapse-icon" id="extraIcon">›</span>
       </div>
       <div class="collapse-body" id="extraBody">
-        <div class="row">
-          <span class="row-label">停工留薪期<span class="sub">原工资福利不变，一般≤12个月、最长24个月</span></span>
+        <div class="row stack">
+          <span class="row-label">停工留薪期<span class="sub">原工资福利不变，最长24个月</span></span>
           <div class="row-value">
-            <input type="number" id="paidLeaveMonths" value="" placeholder="月数" min="0" style="max-width:64px">
+            <input type="number" id="paidLeaveMonths" value="" placeholder="月数" min="0" style="max-width:88px">
             <span class="unit">月 ×</span>
-            <input type="number" id="paidLeaveWage" value="" placeholder="默认同本人工资" min="0" style="max-width:110px">
+            <input type="number" id="paidLeaveWage" value="" placeholder="默认同本人工资" min="0" style="max-width:150px">
             <span class="unit">元</span>
           </div>
         </div>
@@ -320,12 +326,12 @@
             </select>
           </div>
         </div>
-        <div class="row">
+        <div class="row stack">
           <span class="row-label">住院伙食补助<span class="sub">深圳无统一单价，自行填写</span></span>
           <div class="row-value">
-            <input type="number" id="mealDays" value="" placeholder="天数" min="0" style="max-width:64px">
+            <input type="number" id="mealDays" value="" placeholder="天数" min="0" style="max-width:88px">
             <span class="unit">天 ×</span>
-            <input type="number" id="mealRate" value="" placeholder="元/天" min="0" style="max-width:84px">
+            <input type="number" id="mealRate" value="" placeholder="元/天" min="0" style="max-width:100px">
             <span class="unit">元</span>
           </div>
         </div>
@@ -425,6 +431,13 @@ function updateLevelUI() {
 }
 document.getElementById('level').addEventListener('change', updateLevelUI);
 updateLevelUI();
+
+// ── 本人工资联动停工留薪原工资（用户手动改过后不再覆盖）──
+const plWageEl = document.getElementById('paidLeaveWage');
+plWageEl.addEventListener('input', () => { plWageEl.dataset.manual = '1'; });
+document.getElementById('ownWage').addEventListener('input', e => {
+  if (!plWageEl.dataset.manual) plWageEl.value = e.target.value;
+});
 
 // ── 回车直接计算 ──
 document.querySelectorAll('input[type=number]').forEach(el => {
