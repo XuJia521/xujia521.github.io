@@ -1,11 +1,14 @@
 // Service Worker - 离线缓存
-const CACHE_NAME = 'xujia-legal-tools-v8';
+const CACHE_NAME = 'xujia-legal-tools-v9';
 const ASSETS = [
   './',
   './index.html',
   './style.css',
   './tools.js',
   './home.js',
+  './about/',
+  './about/index.html',
+  './about/wechat-qr.png',
   './pgh/',
   './pgh/index.html',
   './pgh/manifest.json',

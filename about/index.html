@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<title>徐嘉律师 · 简介</title>
+<meta name="theme-color" content="#f5efe0">
+<meta name="description" content="徐嘉律师，广东卓建（光明）律师事务所，执业领域：公司合规、建设工程、合同纠纷、劳动仲裁">
+
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+
+<link rel="stylesheet" href="../style.css">
+<style>
+  /* ── 简介页专属样式，沿用 style.css 的配色变量 ── */
+  .about-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    box-shadow: var(--card-shadow);
+    padding: 20px 22px;
+    margin-bottom: 16px;
+    animation: rowIn 0.45s ease both;
+  }
+
+  .about-card:nth-of-type(2) { animation-delay: 0.08s; }
+  .about-card:nth-of-type(3) { animation-delay: 0.16s; }
+
+  .card-heading {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    letter-spacing: 0.12em;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-heading::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--divider);
+  }
+
+  .info-row {
+    display: flex;
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 8px;
+  }
+
+  .info-row:last-child { margin-bottom: 0; }
+
+  .info-label {
+    flex-shrink: 0;
+    width: 72px;
+    color: var(--text-secondary);
+  }
+
+  .info-value { color: var(--text); }
+
+  .field-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .field-tag {
+    font-size: 13px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent-deep);
+    border: 1px solid transparent;
+  }
+
+  .case-list-about {
+    list-style: none;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .case-list-about li {
+    position: relative;
+    padding-left: 18px;
+    margin-bottom: 10px;
+  }
+
+  .case-list-about li:last-child { margin-bottom: 0; }
+
+  .case-list-about li::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 0.65em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .case-note {
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    line-height: 1.6;
+  }
+
+  .contact-phone {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--text);
+    font-size: 16px;
+    letter-spacing: 0.04em;
+    padding: 10px 0;
+  }
+
+  .contact-phone .icon { margin-right: 0; }
+
+  .qr-wrap {
+    margin: 14px auto 4px;
+    max-width: 240px;
+    background: #fff;
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 14px;
+  }
+
+  .qr-wrap img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .qr-hint {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 10px;
+  }
+
+  .back-link {
+    display: inline-block;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 13px;
+  }
+
+  .back-link:hover { color: var(--accent-deep); }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="seal">徐</div>
+    <h1>徐嘉</h1>
+    <p class="subtitle" style="display:block">执业律师 · 广东卓建（光明）律师事务所</p>
+  </header>
+
+  <section class="about-card">
+    <div class="card-heading">执业信息</div>
+    <div class="info-row">
+      <span class="info-label">执业机构</span>
+      <span class="info-value">广东卓建（光明）律师事务所</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">执业证号</span>
+      <span class="info-value">14403202510951329</span>
+    </div>
+    <div class="info-row" style="margin-top:12px">
+      <span class="info-label" style="align-self:center">执业领域</span>
+      <span class="field-tags">
+        <span class="field-tag">公司合规</span>
+        <span class="field-tag">建设工程</span>
+        <span class="field-tag">合同纠纷</span>
+        <span class="field-tag">劳动仲裁</span>
+      </span>
+    </div>
+  </section>
+
+  <section class="about-card">
+    <div class="card-heading">办案经历</div>
+    <ul class="case-list-about">
+      <li>参与办理标的额 2.5 亿元的股权纠纷案件，取得胜诉结果</li>
+      <li>办理多起重大疑难建设工程纠纷，曾成功主张预期利润损失</li>
+      <li>代理多起二审案件并获改判</li>
+      <li>长期代理劳动争议案件，帮助众多劳动者依法维护权益</li>
+    </ul>
+    <p class="case-note">以上为既往办理情况。每个案件的结果取决于具体案情与证据，本页内容不构成对任何案件结果的承诺。</p>
+  </section>
+
+  <section class="about-card">
+    <div class="card-heading">联系方式</div>
+    <a class="contact-phone" href="tel:13265890395">
+      <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6.5 3.5h3l1.5 4-2 1.2a11 11 0 0 0 5 5l1.2-2 4 1.5v3a2 2 0 0 1-2.2 2A16 16 0 0 1 4.5 5.7 2 2 0 0 1 6.5 3.5z"/></svg></span>
+      132 6589 0395
+    </a>
+    <div class="qr-wrap">
+      <img src="wechat-qr.png" alt="徐嘉律师微信二维码" width="600" height="532">
+    </div>
+    <p class="qr-hint">微信扫码添加，咨询请简要说明案情</p>
+  </section>
+
+  <footer>
+    <a class="back-link" href="../">‹ 返回法律工具集</a>
+  </footer>
+</div>
+</body>
+</html>
