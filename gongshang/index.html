@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>工伤赔偿计算器</title>
 <meta name="description" content="深圳地区工伤伤残（1-10级）及治疗期待遇赔偿金额计算工具">
-<meta name="theme-color" content="#f5efe0">
+<meta name="theme-color" content="#f5efe0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1c1a15" media="(prefers-color-scheme: dark)">
 
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -163,7 +164,7 @@
   @media (hover: hover) { .calc-btn:hover { opacity: 0.9; } }
 
   /* ── Results ── */
-  .result-section { display: none; margin-top: 16px; }
+  .result-section { display: none; margin-top: 16px; scroll-margin-top: calc(64px + env(safe-area-inset-top)); }
   .result-section.show { display: block; }
   .result-title {
     font-size: 13px; font-weight: 500; letter-spacing: 0.08em;
@@ -273,6 +274,19 @@
           </div>
         </div>
       </div>
+      <div class="row" id="retireRow">
+        <span class="row-label">距法定退休<span class="sub">不足5年时就业补助金递减</span></span>
+        <div class="row-value">
+          <select id="retireYears">
+            <option value="1">5年及以上（全额）</option>
+            <option value="0.8">不足5年（80%）</option>
+            <option value="0.6">不足4年（60%）</option>
+            <option value="0.4">不足3年（40%）</option>
+            <option value="0.2">不足2年（20%）</option>
+            <option value="0.1">不足1年（10%）</option>
+          </select>
+        </div>
+      </div>
       <div class="hint-row" id="levelHint"></div>
     </div>
   </div>
@@ -287,11 +301,11 @@
       </div>
       <div class="collapse-body" id="extraBody">
         <div class="row">
-          <span class="row-label">停工留薪期<span class="sub">原工资福利不变，一般≤12个月</span></span>
+          <span class="row-label">停工留薪期<span class="sub">原工资福利不变，一般≤12个月、最长24个月</span></span>
           <div class="row-value">
             <input type="number" id="paidLeaveMonths" value="" placeholder="月数" min="0" style="max-width:64px">
             <span class="unit">月 ×</span>
-            <input type="number" id="paidLeaveWage" value="" placeholder="原月工资" min="0" style="max-width:96px">
+            <input type="number" id="paidLeaveWage" value="" placeholder="默认同本人工资" min="0" style="max-width:110px">
             <span class="unit">元</span>
           </div>
         </div>
@@ -384,7 +398,7 @@ function initSeg(id, cb) {
     });
   });
 }
-initSeg('terminateSeg', val => { terminated = val === 'yes'; });
+initSeg('terminateSeg', val => { terminated = val === 'yes'; updateLevelUI(); });
 
 // ── 折叠 ──
 document.getElementById('extraHeader').addEventListener('click', () => {
@@ -399,6 +413,8 @@ function updateLevelUI() {
   const hint = document.getElementById('levelHint');
   // 1-4级保留劳动关系，无"解除"选项
   tRow.style.display = (L >= 5) ? '' : 'none';
+  // 距退休年限仅影响解除/终止时的一次性伤残就业补助金
+  document.getElementById('retireRow').style.display = (L >= 5 && terminated) ? '' : 'none';
   if (L <= 4) {
     hint.innerHTML = `${CN[L]}级：一次性伤残补助金 ${M_DISABILITY[L]} 个月 + 伤残津贴按月 ${R_PENSION[L]*100}%（保留劳动关系、退出工作岗位，由工伤基金支付）。`;
   } else if (L <= 6) {
@@ -409,6 +425,13 @@ function updateLevelUI() {
 }
 document.getElementById('level').addEventListener('change', updateLevelUI);
 updateLevelUI();
+
+// ── 回车直接计算 ──
+document.querySelectorAll('input[type=number]').forEach(el => {
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { el.blur(); document.getElementById('calcBtn').click(); }
+  });
+});
 
 // ── 基数修正 ──
 function correctedBase() {
@@ -452,15 +475,18 @@ document.getElementById('calcBtn').addEventListener('click', () => {
         calc: `${M_MEDICAL[L]}个月 × ${fmt(base)}`,
         amount: base * M_MEDICAL[L], payer: FUND
       });
+      const retireRatio = parseFloat(document.getElementById('retireYears').value) || 1;
       once.push({
         label: '一次性伤残就业补助金',
-        calc: `${M_EMPLOY[L]}个月 × ${fmt(base)}`,
-        amount: base * M_EMPLOY[L], payer: EMP
+        calc: retireRatio < 1
+          ? `${M_EMPLOY[L]}个月 × ${fmt(base)} × ${Math.round(retireRatio*100)}%（距法定退休不足5年递减）`
+          : `${M_EMPLOY[L]}个月 × ${fmt(base)}`,
+        amount: base * M_EMPLOY[L] * retireRatio, payer: EMP
       });
     } else if (L <= 6) {
       monthly.push({
         label: '伤残津贴',
-        calc: `${fmt(base)} × ${R_PENSION[L]*100}%（单位难以安排工作时）`,
+        calc: `${fmt(base)} × ${R_PENSION[L]*100}%（单位难以安排工作时；低于深圳最低工资的由单位补足差额）`,
         amount: base * R_PENSION[L], payer: EMP
       });
     }
@@ -470,17 +496,22 @@ document.getElementById('calcBtn').addEventListener('click', () => {
   if (L <= 4) {
     monthly.push({
       label: '伤残津贴',
-      calc: `${fmt(base)} × ${R_PENSION[L]*100}%`,
+      calc: `${fmt(base)} × ${R_PENSION[L]*100}%（低于深圳最低工资的由基金补足差额）`,
       amount: base * R_PENSION[L], payer: FUND
     });
   }
 
   // 4) 治疗期及护理
-  const plMonths = num('paidLeaveMonths'), plWage = num('paidLeaveWage');
+  // 停工留薪期工资按"原工资福利"（受伤前实际工资），不适用社平封顶/托底；
+  // 未填原工资时按未经修正的本人工资带入
+  const plMonths = num('paidLeaveMonths');
+  let plWage = num('paidLeaveWage'), plNote = '';
+  if (plMonths > 0 && plWage <= 0) { plWage = num('ownWage'); plNote = '（未填原工资，按本人工资计）'; }
+  if (plMonths > 24) plNote += '（已超法定最长24个月，请核实）';
   if (plMonths > 0 && plWage > 0) {
     once.push({
       label: '停工留薪期工资',
-      calc: `${plMonths}个月 × ${fmt(plWage)}`,
+      calc: `${plMonths}个月 × ${fmt(plWage)}${plNote}`,
       amount: plMonths * plWage, payer: EMP
     });
   }
@@ -530,7 +561,7 @@ function render(once, monthly, status) {
   let onceTotal = 0;
   let html = '';
   once.forEach(it => {
-    onceTotal += it.amount;
+    onceTotal += Math.round(it.amount);  // 与逐项显示口径一致，避免合计差1元
     html += `<div class="result-item">
       <span class="result-label">${it.label}${it.payer}<span class="calc">${it.calc}</span></span>
       <span class="result-amount">${fmt(it.amount)}</span>
