@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>在办案件</title>
+    
+    <!-- App 图标设置 -->
+    <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAqO0lEQVR4nO3dabAlZ33f8d/zdPdZ7zJ3dmlGoAUhCUkgoQ1jbIEExgmLQ8AY25QXbHAcO0lVKlVObKfywkmVU6m8SeFyTBLjcjmggDDYxiBWA0ZCICGQhJaR0IjRMiPNcmfucvbu558Xfa4WxKLlLPee5/spRoI7Q92ec8/p59tPP93t+r2WCQAARMVPewMAAMDkEQAAAESIAAAAIEIEAAAAESIAAACIEAEAAECECAAAACJEAAAAECECAACACBEAAABEiAAAACBCBAAAABEiAAAAiBABAABAhAgAAAAiRAAAABAhAgAAgAgRAAAARIgAAAAgQgQAAAARIgAAAIgQAQAAQIQIAAAAIkQAAAAQIQIAAIAIEQAAAESIAAAAIEIEAAAAESIAAACIEAEAAECECAAAACJEAAAAECECAACACBEAAABEiAAAACBCBAAAABEiAAAAiBABAABAhAgAAAAiRAAAABAhAgAAgAgRAAAARIgAAAAgQgQAAAARIgAAAIgQAQAAQIQIAAAAIkQAAAAQIQIAAIAIEQAAAESIAAAAIEIEAAAAESIAAACIEAEAAECECAAAACJEAAAAECECAACACBEAAABEiAAAACBCBAAAABEiAAAAiBABAABAhAgAAAAiRAAAABAhAgAAgAgRAAAARIgAAAAgQgQAAAARIgAAAIgQAQAAQIQIAAAAIkQAAAAQIQIAAIAIEQAAAESIAAAAIEIEAAAAESIAAACIEAEAAECECAAAACJEAAAAECECAACACBEAAABEiAAAACBCBAAAABEiAAAAiBABAABAhAgAAAAiRAAAABAhAgAAgAgRAAAARIgAAAAgQgQAAAARIgAAAIgQAQAAQIQIAAAAIkQAAAAQIQIAAIAIEQAAAESIAAAAIEIEAAAAESIAAACIEAEAAECECAAAACJEAAAAECECAACACBEAAABEiAAAACBCBAAAABEiAAAAiBABAABAhAgAAAAiRAAAABAhAgAAgAgRAAAARIgAAAAgQgQAAAARIgAAAIhQOu0NAKJk9sS/y/9W/tPJTWuLJmLjb/vE39QN/75utv/ewGZEAACTYEFmVg573sslqZQkci6RZnzQ/+FMZoVUFLJQSCHIZHLODYMg1tcFmAwCABgHs+GALylJ5SpV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">
+    
+    <!-- 隐藏浏览器工具栏，使其更像原生 App -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="在办案件">
+
+    <!-- PWA 配置（Android / Chrome 等） -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="在办案件">
+    <meta name="theme-color" content="#f5f4ed" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#262624" media="(prefers-color-scheme: dark)">
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f5f4ed;
+            --card-bg: rgba(255, 255, 255, 0.75);
+            --primary: #d97757;
+            --primary-strong: #c15f3c;
+            --text: #1f1e1d;
+            --text-dim: #73726c;
+            --border: rgba(0, 0, 0, 0.1);
+            --danger: #c0392b;
+            --success: #3d9a50;
+            --title: #1f1e1d;
+            --remark-bg: rgba(0, 0, 0, 0.04);
+            --remark-text: #57544e;
+            --modal-bg: #faf9f5;
+            --bar-bg: rgba(245, 244, 237, 0.9);
+            --glow-1: rgba(217, 119, 87, 0.06);
+            --glow-2: rgba(217, 119, 87, 0.04);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #262624;
+                --card-bg: rgba(255, 255, 255, 0.05);
+                --primary: #d97757;
+                --primary-strong: #e08a6b;
+                --text: #f5f4ee;
+                --text-dim: #a3a097;
+                --border: rgba(255, 255, 255, 0.12);
+                --danger: #e07a6f;
+                --success: #5cba6e;
+                --title: #f5f4ee;
+                --remark-bg: rgba(255, 255, 255, 0.05);
+                --remark-text: #c9c6bd;
+                --modal-bg: #30302d;
+                --bar-bg: rgba(38, 38, 36, 0.92);
+                --glow-1: rgba(217, 119, 87, 0.1);
+                --glow-2: rgba(217, 119, 87, 0.06);
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            color-scheme: light dark;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: var(--bg);
+            background-image: radial-gradient(circle at top right, var(--glow-1), transparent),
+                              radial-gradient(circle at bottom left, var(--glow-2), transparent);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 16px;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: calc(100px + env(safe-area-inset-bottom));
+            min-height: 100vh;
+        }
+
+        header {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 10px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.01em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s, transform 0.12s ease;
+        }
+
+        .stat-card:active {
+            background: rgba(217, 119, 87, 0.18);
+            transform: scale(0.97);
+        }
+
+        @media (hover: hover) {
+            .stat-card:hover {
+                border-color: var(--primary);
+            }
+        }
+
+        .stat-card.active {
+            border-color: var(--primary);
+            background: rgba(217, 119, 87, 0.12);
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+        }
+
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: var(--text);
+            font-size: 16px;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+        }
+
+        .search-wrap {
+            position: relative;
+        }
+
+        .search-clear {
+            display: none;
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            background: rgba(100, 116, 139, 0.25);
+            border-radius: 50%;
+            font-size: 12px;
+            color: var(--text-dim);
+            cursor: pointer;
+        }
+
+        .search-clear.visible {
+            display: block;
+        }
+
+        .case-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .case-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            position: relative;
+            cursor: pointer;
+            animation: fadeIn 0.3s ease-out;
+            transition: transform 0.15s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .case-card:active {
+            transform: scale(0.985);
+            border-color: var(--primary);
+        }
+
+        @media (hover: hover) {
+            .case-card:hover {
+                border-color: var(--primary);
+                box-shadow: 0 4px 16px rgba(217, 119, 87, 0.14);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .case-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+        }
+
+        .case-title {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--title);
+        }
+
+        .case-badge {
+            font-size: 0.7rem;
+            font-weight: 500;
+            padding: 2px 8px;
+            border-radius: 6px;
+            white-space: nowrap;
+            background: var(--badge-bg, rgba(217, 119, 87, 0.14));
+            color: var(--badge-fg, #c15f3c);
+            border: 1px solid var(--badge-bg, rgba(217, 119, 87, 0.14));
+        }
+
+        /* 按案件阶段区分徽章配色（暖色系，避免紫色） */
+        .case-badge.badge-litigation { --badge-bg: rgba(217, 119, 87, 0.14); --badge-fg: #c15f3c; }
+        .case-badge.badge-exec       { --badge-bg: rgba(193, 138, 47, 0.16); --badge-fg: #a87521; }
+        .case-badge.badge-arb        { --badge-bg: rgba(60, 130, 120, 0.16); --badge-fg: #2f7a6e; }
+        .case-badge.badge-pending    { --badge-bg: rgba(120, 116, 108, 0.16); --badge-fg: #73726c; }
+        .case-badge.badge-done       { --badge-bg: rgba(61, 154, 80, 0.16);  --badge-fg: #3d8a4c; }
+
+        @media (prefers-color-scheme: dark) {
+            .case-badge.badge-litigation { --badge-fg: #e89a7e; }
+            .case-badge.badge-exec       { --badge-fg: #d9b061; }
+            .case-badge.badge-arb        { --badge-fg: #6fc2b3; }
+            .case-badge.badge-pending    { --badge-fg: #b8b5ac; }
+            .case-badge.badge-done       { --badge-fg: #6fc77f; }
+        }
+
+        .case-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            color: var(--text-dim);
+            font-size: 0.7rem;
+        }
+
+        .info-value {
+            overflow-wrap: anywhere;
+            min-height: 1.4em;
+        }
+
+        .case-remark {
+            margin-top: 12px;
+            padding: 8px;
+            background: var(--remark-bg);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: var(--remark-text);
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .case-actions {
+            margin-top: 12px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            padding: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            transition: transform 0.12s ease, background 0.2s ease;
+        }
+
+        .btn-icon:active {
+            transform: scale(0.9);
+            background: rgba(239, 68, 68, 0.12);
+        }
+
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bar-bg);
+            backdrop-filter: blur(20px);
+            padding: 16px;
+            padding-bottom: calc(16px + env(safe-area-inset-bottom));
+            display: flex;
+            gap: 12px;
+            border-top: 1px solid var(--border);
+            z-index: 100;
+        }
+
+        .btn-main {
+            flex: 1;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(217, 119, 87, 0.3);
+            transition: transform 0.12s ease, box-shadow 0.2s ease, filter 0.2s ease;
+        }
+
+        .btn-main:active {
+            transform: scale(0.97);
+            box-shadow: 0 2px 8px rgba(217, 119, 87, 0.25);
+        }
+
+        @media (hover: hover) {
+            .btn-main:hover { filter: brightness(1.05); }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--modal-bg);
+            border-radius: 16px;
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+            margin-top: 20px;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--title);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            max-width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: var(--text);
+            font-size: 16px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: transform 0.12s ease, background 0.2s ease;
+        }
+
+        .btn-cancel:active {
+            transform: scale(0.97);
+            background: var(--remark-bg);
+        }
+
+        .btn-save {
+            flex: 1;
+            background: var(--primary);
+            border: none;
+            color: white;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: transform 0.12s ease, filter 0.2s ease;
+        }
+
+        .btn-save:active {
+            transform: scale(0.97);
+        }
+
+        @media (hover: hover) {
+            .btn-save:hover { filter: brightness(1.05); }
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .header-btn {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 6px;
+            transition: color 0.2s ease, transform 0.12s ease;
+        }
+
+        .header-btn:active {
+            transform: scale(0.94);
+            color: var(--primary);
+        }
+
+        /* 电话输入框带拨打按钮 */
+        .phone-input-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .phone-input-group .form-input {
+            flex: 1;
+        }
+
+        .btn-call {
+            background: var(--success);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-call:active {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>在办案件</h1>
+        <div class="header-actions">
+            <button class="header-btn" onclick="exportData()">导出</button>
+            <button class="header-btn" onclick="importData()">导入</button>
+        </div>
+    </header>
+
+    <div class="stats-grid">
+        <div class="stat-card" onclick="filterBy('all')">
+            <span class="stat-value" id="totalCount">0</span>
+            <span class="stat-label">总数</span>
+        </div>
+        <div class="stat-card" onclick="filterBy('pending')">
+            <span class="stat-value" id="pendingCount">0</span>
+            <span class="stat-label">待跟进</span>
+        </div>
+        <div class="stat-card" onclick="filterBy('week')">
+            <span class="stat-value" id="weekCount">0</span>
+            <span class="stat-label">本周</span>
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="search-wrap">
+            <input type="text" class="search-input" id="searchInput" placeholder="搜索当事人、案号..." oninput="onSearchInput()">
+            <span id="clearSearch" class="search-clear" ontouchend="clearSearch(event)" onclick="clearSearch(event)">✕</span>
+        </div>
+    </div>
+
+    <div class="case-list" id="caseList"></div>
+
+    <div class="bottom-bar">
+        <button class="btn-main" onclick="openModal()">新增案件</button>
+    </div>
+
+    <div class="modal" id="caseModal">
+        <div class="modal-content">
+            <h2 class="modal-title" id="modalTitle">新增案件</h2>
+            <input type="hidden" id="editId">
+
+            <div class="form-group">
+                <label class="form-label">当事人</label>
+                <input type="text" id="f_client" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">案号</label>
+                <input type="text" id="f_caseNo" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">代理方</label>
+                <select id="f_party" class="form-input">
+                    <option value="原告">原告</option>
+                    <option value="被告">被告</option>
+                    <option value="申请人">申请人</option>
+                    <option value="被申请人">被申请人</option>
+                    <option value="上诉人">上诉人</option>
+                    <option value="被上诉人">被上诉人</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">阶段</label>
+                <select id="f_stage" class="form-input">
+                    <option value="一审">一审</option>
+                    <option value="二审">二审</option>
+                    <option value="执行">执行</option>
+                    <option value="待分配">待分配</option>
+                    <option value="仲裁">仲裁</option>
+                    <option value="劳动仲裁">劳动仲裁</option>
+                    <option value="已结案">已结案</option>
+                    <option value="调档">调档</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">受理机构</label>
+                <input type="text" id="f_court" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">承办人电话</label>
+                <div class="phone-input-group">
+                    <input type="text" id="f_judgePhone" class="form-input">
+                    <button type="button" class="btn-call" onclick="callPhone('f_judgePhone')">📞</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">助理电话</label>
+                <div class="phone-input-group">
+                    <input type="text" id="f_assistantPhone" class="form-input">
+                    <button type="button" class="btn-call" onclick="callPhone('f_assistantPhone')">📞</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">跟进日期</label>
+                <input type="date" id="f_followDate" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">备注</label>
+                <textarea id="f_remark" class="form-input" rows="3"></textarea>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal()">取消</button>
+                <button class="btn-save" onclick="saveCase()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="importFile" style="display:none" onchange="handleImport(event)">
+
+    <script>
+        let cases = JSON.parse(localStorage.getItem('caseManagement_mobile') || '[]');
+        let currentFilter = 'all'; // 当前筛选条件
+
+        function saveToStorage() {
+            localStorage.setItem('caseManagement_mobile', JSON.stringify(cases));
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('totalCount').textContent = cases.length;
+            const today = new Date().toISOString().split('T')[0];
+            const pending = cases.filter(c => c.followDate >= today).length;
+            document.getElementById('pendingCount').textContent = pending;
+            
+            const now = new Date();
+            const weekEnd = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            const week = cases.filter(c => c.followDate >= today && c.followDate <= weekEnd).length;
+            document.getElementById('weekCount').textContent = week;
+        }
+
+        function filterBy(type) {
+            currentFilter = type;
+            
+            // 更新卡片选中状态
+            document.querySelectorAll('.stat-card').forEach((card, index) => {
+                card.classList.remove('active');
+                if ((type === 'all' && index === 0) || 
+                    (type === 'pending' && index === 1) || 
+                    (type === 'week' && index === 2)) {
+                    card.classList.add('active');
+                }
+            });
+            
+            renderList();
+        }
+
+        // 转义用户输入，防止 XSS（备注/当事人等会插入 innerHTML）
+        function escapeHtml(value) {
+            return String(value == null ? '' : value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // 根据案件阶段返回徽章配色类
+        function stageBadgeClass(stage) {
+            switch (stage) {
+                case '已结案': return 'badge-done';
+                case '执行': return 'badge-exec';
+                case '仲裁':
+                case '劳动仲裁': return 'badge-arb';
+                case '待分配':
+                case '调档': return 'badge-pending';
+                default: return 'badge-litigation';
+            }
+        }
+
+        function renderList() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const listElement = document.getElementById('caseList');
+            const today = new Date().toISOString().split('T')[0];
+            const now = new Date();
+            const weekEnd = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            
+            let filtered = cases;
+            
+            // 先按筛选条件过滤
+            if (currentFilter === 'pending') {
+                filtered = cases.filter(c => c.followDate >= today);
+            } else if (currentFilter === 'week') {
+                filtered = cases.filter(c => c.followDate >= today && c.followDate <= weekEnd);
+            }
+            
+            // 再按搜索词过滤
+            filtered = filtered.filter(c => 
+                (c.client || '').toLowerCase().includes(searchTerm) || 
+                (c.caseNo || '').toLowerCase().includes(searchTerm) ||
+                (c.stage || '').toLowerCase().includes(searchTerm)
+            );
+
+            listElement.innerHTML = filtered.map(c => `
+                <div class="case-card" onclick="editCase(${c.id})">
+                    <div class="case-header">
+                        <span class="case-title">${escapeHtml(c.client) || '未填写当事人'}</span>
+                        <span class="case-badge ${stageBadgeClass(c.stage)}">${escapeHtml(c.stage) || '未知阶段'}</span>
+                    </div>
+                    <div class="case-info-grid">
+                        <div class="info-item">
+                            <span class="info-label">案号</span>
+                            <span class="info-value">${escapeHtml(c.caseNo) || '-'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">代理方</span>
+                            <span class="info-value">${escapeHtml(c.party) || '-'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">受理机构</span>
+                            <span class="info-value">${escapeHtml(c.court) || '-'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">跟进日期</span>
+                            <span class="info-value">${escapeHtml(c.followDate) || '-'}</span>
+                        </div>
+                    </div>
+                    ${c.remark ? `<div class="case-remark">${escapeHtml(c.remark)}</div>` : ''}
+                    <div class="case-actions">
+                        <button class="btn-icon" onclick="event.stopPropagation(); deleteCase(${c.id})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            if (filtered.length === 0) {
+                listElement.innerHTML = '<div style="text-align:center; color:var(--text-dim); margin-top:40px;">暂无案件数据</div>';
+            }
+        }
+
+        function openModal(id = null) {
+            const modal = document.getElementById('caseModal');
+            const title = document.getElementById('modalTitle');
+            const editId = document.getElementById('editId');
+            
+            if (id) {
+                const c = cases.find(x => x.id === id);
+                title.textContent = '编辑案件';
+                editId.value = id;
+                document.getElementById('f_client').value = c.client || '';
+                document.getElementById('f_caseNo').value = c.caseNo || '';
+                document.getElementById('f_party').value = c.party || '原告';
+                document.getElementById('f_stage').value = c.stage || '一审';
+                document.getElementById('f_court').value = c.court || '';
+                document.getElementById('f_judgePhone').value = c.judgePhone || '';
+                document.getElementById('f_assistantPhone').value = c.assistantPhone || '';
+                document.getElementById('f_followDate').value = c.followDate || '';
+                document.getElementById('f_remark').value = c.remark || '';
+            } else {
+                title.textContent = '新增案件';
+                editId.value = '';
+                document.querySelectorAll('.form-input').forEach(i => i.value = '');
+                document.getElementById('f_party').value = '原告';
+                document.getElementById('f_stage').value = '一审';
+            }
+            
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('caseModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function saveCase() {
+            const id = document.getElementById('editId').value;
+            const data = {
+                id: id ? parseInt(id) : Date.now(),
+                client: document.getElementById('f_client').value,
+                caseNo: document.getElementById('f_caseNo').value,
+                party: document.getElementById('f_party').value,
+                stage: document.getElementById('f_stage').value,
+                court: document.getElementById('f_court').value,
+                judgePhone: document.getElementById('f_judgePhone').value,
+                assistantPhone: document.getElementById('f_assistantPhone').value,
+                followDate: document.getElementById('f_followDate').value,
+                remark: document.getElementById('f_remark').value
+            };
+
+            if (id) {
+                const index = cases.findIndex(x => x.id === parseInt(id));
+                cases[index] = data;
+            } else {
+                cases.unshift(data);
+            }
+
+            saveToStorage();
+            renderList();
+            closeModal();
+        }
+
+        function editCase(id) {
+            openModal(id);
+        }
+
+        function deleteCase(id) {
+            if (confirm('确定删除该案件吗？')) {
+                cases = cases.filter(x => x.id !== id);
+                saveToStorage();
+                renderList();
+            }
+        }
+
+        // 拨打电话功能
+        function callPhone(inputId) {
+            const phoneInput = document.getElementById(inputId);
+            const phoneValue = phoneInput.value.trim();
+            
+            if (!phoneValue) {
+                alert('请先输入电话号码');
+                return;
+            }
+            
+            // 提取电话号码（支持格式：姓名：电话 或 纯电话）
+            let phoneNumber = phoneValue;
+            if (phoneValue.includes('：')) {
+                phoneNumber = phoneValue.split('：').pop().trim();
+            } else if (phoneValue.includes(':')) {
+                phoneNumber = phoneValue.split(':').pop().trim();
+            }
+            
+            // 去除非数字字符（保留+号和-号）
+            phoneNumber = phoneNumber.replace(/[^\d+\-]/g, '');
+            
+            if (!phoneNumber) {
+                alert('未找到有效的电话号码');
+                return;
+            }
+            
+            // 拨打电话
+            window.location.href = 'tel:' + phoneNumber;
+        }
+
+        function exportData() {
+            const data = JSON.stringify(cases);
+            const blob = new Blob([data], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const now = new Date();
+            const dateStr = now.getFullYear().toString() +
+                String(now.getMonth() + 1).padStart(2, '0') +
+                String(now.getDate()).padStart(2, '0');
+            a.download = '案件数据_' + dateStr + '.json';
+            a.click();
+        }
+
+        function importData() {
+            document.getElementById('importFile').click();
+        }
+
+        function handleImport(e) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const data = JSON.parse(event.target.result);
+                    cases = data;
+                    saveToStorage();
+                    renderList();
+                    alert('导入成功');
+                } catch (err) {
+                    alert('导入失败');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function onSearchInput() {
+            var btn = document.getElementById('clearSearch');
+            btn.classList.toggle('visible', !!document.getElementById('searchInput').value);
+            renderList();
+        }
+
+        function clearSearch(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById('searchInput').value = '';
+            document.getElementById('clearSearch').classList.remove('visible');
+            currentFilter = 'all';
+            document.querySelectorAll('.stat-card').forEach(function(c) { c.classList.remove('active'); });
+            updateStats();
+            renderList();
+        }
+
+        updateStats();
+        renderList();
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('./service-worker.js').catch(function() {});
+            });
+        }
+    </script>
+</body>
+</html>

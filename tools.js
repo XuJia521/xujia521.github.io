@@ -10,9 +10,9 @@
 window.TOOLS = [
   {
     name: '案件管理',
-    desc: '支持一键拨打法官电话',
+    desc: '案件台账 · 跟进日期 · 一键拨号',
     url: 'https://xujia521.github.io/case-manager/',
-    icon: '<path d="M6.5 3.5h3l1.5 4-2 1.2a11 11 0 0 0 5 5l1.2-2 4 1.5v3a2 2 0 0 1-2.2 2A16 16 0 0 1 4.5 5.7 2 2 0 0 1 6.5 3.5z"/>'
+    icon: '<rect x="3.5" y="7" width="17" height="13" rx="2"/><path d="M8.5 7V5.5a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2V7"/>'
   },
   {
     name: '利息计算器',
