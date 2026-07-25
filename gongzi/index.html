@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>工资计算器 · 五险一金与个税</title>
+<meta name="description" content="输入税前工资，计算深圳五险一金个人/单位缴费、个人所得税（累计预扣法）及到手工资">
+<meta name="theme-color" content="#f5efe0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1c1a15" media="(prefers-color-scheme: dark)">
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --bg: #f5efe0;
+    --grid: #ebe4d2;
+    --card: #fbf6e8;
+    --card-border: #ebe3cb;
+    --text: #3a352b;
+    --text-secondary: #86806f;
+    --text-tertiary: #b0a992;
+    --divider: #ede5cc;
+    --accent: #d4a84a;
+    --accent-light: rgba(212,168,74,0.12);
+    --accent-text: #a07a20;
+    --danger: #c0392b;
+    --danger-light: rgba(192,57,43,0.1);
+    --fund: #2d7d6f;
+    --fund-light: rgba(45,125,111,0.12);
+    --employer: #b06a2c;
+    --employer-light: rgba(176,106,44,0.12);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1a15; --grid: #252219; --card: #2a2619; --card-border: #3a3525;
+      --text: #ede6d1; --text-secondary: #a39a82; --text-tertiary: #6e6857;
+      --divider: #3a3525; --accent: #d4a84a; --accent-text: #e8c06a;
+      --accent-light: rgba(212,168,74,0.15); --danger: #e05a4a;
+      --danger-light: rgba(224,90,74,0.12);
+      --fund: #4ec3b0; --fund-light: rgba(78,195,176,0.14);
+      --employer: #d99a5a; --employer-light: rgba(217,154,90,0.14);
+    }
+  }
+
+  html, body {
+    background-color: var(--bg);
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 42px 42px; background-position: -1px -1px;
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px; line-height: 1.5;
+    -webkit-font-smoothing: antialiased; min-height: 100vh;
+  }
+
+  .container {
+    max-width: 560px; margin: 0 auto;
+    padding: 56px 16px 80px;
+    padding-top: calc(52px + env(safe-area-inset-top));
+    padding-bottom: calc(80px + env(safe-area-inset-bottom));
+  }
+
+  /* ── Top bar ── */
+  .top-bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    background: rgba(245,239,224,0.92);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid var(--card-border);
+    padding-top: env(safe-area-inset-top);
+  }
+  @media (prefers-color-scheme: dark) { .top-bar { background: rgba(28,26,21,0.92); } }
+  .top-bar-inner {
+    max-width: 560px; margin: 0 auto;
+    display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+  }
+  .back-btn {
+    color: var(--accent-text); font-size: 15px; text-decoration: none;
+    padding: 4px 0; display: flex; align-items: center; gap: 4px; flex-shrink: 0;
+  }
+  .top-bar-title { font-size: 17px; font-weight: 500; letter-spacing: 0.02em; }
+
+  /* ── Section ── */
+  .section { margin-bottom: 16px; }
+  .section-title {
+    font-size: 12px; font-weight: 500;
+    color: var(--text-secondary); letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 8px; padding: 0 4px;
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 18px; overflow: hidden;
+    box-shadow: 0 1px 2px rgba(60,50,20,0.04);
+  }
+
+  /* ── Row ── */
+  .row {
+    display: flex; align-items: center;
+    padding: 11px 16px; border-bottom: 1px solid var(--divider); gap: 12px;
+  }
+  .row:last-child { border-bottom: none; }
+  .row-label { font-size: 15px; flex-shrink: 0; min-width: 124px; color: var(--text); }
+  .row-label .sub { display: block; font-size: 12px; color: var(--text-tertiary); }
+  .row-value { flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+
+  /* ── Inputs ── */
+  input[type=number], input[type=text], select {
+    background: transparent; border: none; outline: none;
+    color: var(--text); font-size: 15px; font-family: inherit;
+    text-align: right; width: 100%; min-width: 0;
+    -moz-appearance: textfield; appearance: textfield;
+  }
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+  input::placeholder { color: var(--text-tertiary); }
+  select { text-align-last: right; cursor: pointer; }
+  option { background: var(--card); }
+  .unit { font-size: 13px; color: var(--text-secondary); flex-shrink: 0; }
+
+  /* ── Hint ── */
+  .hint-row {
+    padding: 9px 16px; font-size: 12px; line-height: 1.5;
+    color: var(--text-secondary); border-bottom: 1px solid var(--divider);
+    background: var(--accent-light);
+  }
+  .hint-row:last-child { border-bottom: none; }
+
+  /* ── Segment control ── */
+  .seg { display: flex; background: var(--divider); border-radius: 8px; padding: 2px; gap: 2px; }
+  .seg-btn {
+    flex: 1; padding: 5px 8px; font-size: 13px; text-align: center;
+    border: none; background: transparent; color: var(--text-secondary);
+    border-radius: 6px; cursor: pointer; font-family: inherit; transition: all 0.15s; white-space: nowrap;
+  }
+  .seg-btn.active {
+    background: var(--card); color: var(--text); font-weight: 500;
+    box-shadow: 0 1px 3px rgba(60,50,20,0.1);
+  }
+
+  /* ── Collapsible ── */
+  .collapse-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 13px 16px; cursor: pointer; user-select: none;
+  }
+  .collapse-header .label { font-size: 15px; font-weight: 500; }
+  .collapse-header .label .sub { font-size: 12px; color: var(--text-tertiary); font-weight: 400; margin-left: 6px; }
+  .collapse-icon { font-size: 18px; color: var(--text-tertiary); transition: transform 0.2s; }
+  .collapse-icon.open { transform: rotate(90deg); }
+  .collapse-body { display: none; border-top: 1px solid var(--divider); }
+  .collapse-body.open { display: block; }
+
+  /* ── Calculate button ── */
+  .calc-btn {
+    width: 100%; padding: 15px;
+    background: var(--accent); color: #fff;
+    border: none; border-radius: 16px;
+    font-size: 17px; font-weight: 600; font-family: inherit; letter-spacing: 0.04em;
+    cursor: pointer; margin-top: 8px; transition: opacity 0.15s, transform 0.1s;
+  }
+  .calc-btn:active { opacity: 0.85; transform: scale(0.99); }
+  @media (hover: hover) { .calc-btn:hover { opacity: 0.9; } }
+
+  /* ── Results ── */
+  .result-section { display: none; margin-top: 16px; scroll-margin-top: calc(64px + env(safe-area-inset-top)); }
+  .result-section.show { display: block; }
+  .result-title {
+    font-size: 13px; font-weight: 500; letter-spacing: 0.08em;
+    color: var(--text-secondary); margin-bottom: 8px; padding: 0 4px;
+  }
+  .result-item {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 11px 16px; border-bottom: 1px solid var(--divider); gap: 10px;
+  }
+  .result-item:last-child { border-bottom: none; }
+  .result-label { font-size: 14px; color: var(--text); flex: 1; }
+  .result-label .calc { display: block; font-size: 12px; color: var(--text-tertiary); margin-top: 2px; }
+  .result-amount { font-size: 15px; font-weight: 500; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .payer {
+    display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 6px;
+    margin-left: 6px; vertical-align: middle; font-weight: 500;
+  }
+  .payer.fund { color: var(--fund); background: var(--fund-light); }
+  .payer.employer { color: var(--employer); background: var(--employer-light); }
+
+  .result-total {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 16px; border-top: 2px solid var(--divider);
+  }
+  .result-total .label { font-size: 16px; font-weight: 600; }
+  .result-total .amount { font-size: 20px; font-weight: 700; color: var(--accent-text); font-variant-numeric: tabular-nums; }
+
+  .final-claim {
+    background: var(--accent-light); border: 1px solid var(--accent);
+    border-radius: 14px; padding: 14px 16px; margin-top: 16px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .final-claim .label { font-size: 15px; font-weight: 500; }
+  .final-claim .amount { font-size: 22px; font-weight: 700; color: var(--accent-text); font-variant-numeric: tabular-nums; }
+
+  .note { font-size: 12px; color: var(--text-tertiary); padding: 12px 4px; line-height: 1.7; }
+  .note b { color: var(--text-secondary); font-weight: 500; }
+
+  @media (max-width: 380px) {
+    .container { padding: 52px 12px 72px; }
+    .row-label { min-width: 104px; font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <a class="back-btn" href="https://xujia521.github.io/">‹ 工具集</a>
+    <span class="top-bar-title">工资计算器</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- 工资与基数 -->
+  <div class="section">
+    <div class="section-title">工资与缴费基数</div>
+    <div class="card">
+      <div class="row">
+        <span class="row-label">税前月工资<span class="sub">应发工资（扣款前）</span></span>
+        <div class="row-value">
+          <input type="number" id="salary" value="" placeholder="必填" min="0">
+          <span class="unit">元/月</span>
+        </div>
+      </div>
+      <div class="row">
+        <span class="row-label">社保缴费基数<span class="sub">申报基数，超上下限自动修正</span></span>
+        <div class="row-value">
+          <input type="number" id="siBase" value="" placeholder="默认同工资" min="0">
+          <span class="unit">元/月</span>
+        </div>
+      </div>
+      <div class="row">
+        <span class="row-label">公积金基数</span>
+        <div class="row-value">
+          <input type="number" id="hfBase" value="" placeholder="默认同工资" min="0">
+          <span class="unit">元/月</span>
+        </div>
+      </div>
+      <div class="row">
+        <span class="row-label">公积金比例<span class="sub">单位与个人各按此比例</span></span>
+        <div class="row-value">
+          <select id="hfRate">
+            <option value="0">不缴存</option>
+            <option value="5" selected>5%</option>
+            <option value="6">6%</option>
+            <option value="7">7%</option>
+            <option value="8">8%</option>
+            <option value="9">9%</option>
+            <option value="10">10%</option>
+            <option value="11">11%</option>
+            <option value="12">12%</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <span class="row-label">户籍<span class="sub">深户单位另缴地方补充养老</span></span>
+        <div class="row-value">
+          <div class="seg" id="hukouSeg">
+            <button class="seg-btn active" data-val="no">非深户</button>
+            <button class="seg-btn" data-val="yes">深户</button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <span class="row-label">医保档次</span>
+        <div class="row-value">
+          <div class="seg" id="medSeg">
+            <button class="seg-btn active" data-val="1">一档</button>
+            <button class="seg-btn" data-val="2">二档</button>
+          </div>
+        </div>
+      </div>
+      <div class="hint-row">缴费基数留空则按税前工资计。各险种基数上下限不同，计算时会分别按下限托底、上限封顶并在结果中标注。</div>
+    </div>
+  </div>
+
+  <!-- 个税扣除 -->
+  <div class="section">
+    <div class="section-title">个税扣除项（按需填写）</div>
+    <div class="card">
+      <div class="collapse-header" id="dedHeader">
+        <span class="label">展开填写<span class="sub">专项附加扣除 / 年金等其他扣除</span></span>
+        <span class="collapse-icon" id="dedIcon">›</span>
+      </div>
+      <div class="collapse-body" id="dedBody">
+        <div class="row">
+          <span class="row-label">专项附加扣除<span class="sub">子女教育、房贷/房租、赡养老人等合计</span></span>
+          <div class="row-value">
+            <input type="number" id="extraDed" value="" placeholder="0" min="0">
+            <span class="unit">元/月</span>
+          </div>
+        </div>
+        <div class="row">
+          <span class="row-label">其他扣除<span class="sub">企业年金、税优商业健康险等</span></span>
+          <div class="row-value">
+            <input type="number" id="otherDed" value="" placeholder="0" min="0">
+            <span class="unit">元/月</span>
+          </div>
+        </div>
+        <div class="hint-row">专项附加扣除常见标准（每月）：子女教育每孩 2000、赡养老人最高 3000、住房贷款利息 1000、住房租金 800－1500、3岁以下婴幼儿照护每孩 2000。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 费率与基准 -->
+  <div class="section">
+    <div class="section-title">费率与基准（默认深圳参考值，可修改）</div>
+    <div class="card">
+      <div class="collapse-header" id="rateHeader">
+        <span class="label">展开修改<span class="sub">社平工资 / 上下限 / 各险种费率</span></span>
+        <span class="collapse-icon" id="rateIcon">›</span>
+      </div>
+      <div class="collapse-body" id="rateBody">
+        <div class="hint-row">以下为按深圳市公开标准整理的参考值。社平工资、基数上下限每年 7 月调整，费率也可能有阶段性政策，请按计算所属年度的最新公布数据修改。</div>
+        <div class="row">
+          <span class="row-label">最低工资<span class="sub">养老/失业/公积金基数下限</span></span>
+          <div class="row-value"><input type="number" id="minWage" value="2360" min="0"><span class="unit">元/月</span></div>
+        </div>
+        <div class="row">
+          <span class="row-label">深圳社平工资<span class="sub">医保等基数按其60%－300%</span></span>
+          <div class="row-value"><input type="number" id="cityAvg" value="13730" min="0"><span class="unit">元/月</span></div>
+        </div>
+        <div class="row">
+          <span class="row-label">养老基数上限<span class="sub">广东省全口径社平×300%</span></span>
+          <div class="row-value"><input type="number" id="penCap" value="26421" min="0"><span class="unit">元/月</span></div>
+        </div>
+        <div class="row">
+          <span class="row-label">养老 · 个人</span>
+          <div class="row-value"><input type="number" id="rPenP" value="8" min="0" step="0.01"><span class="unit">%</span></div>
+        </div>
+        <div class="row">
+          <span class="row-label">养老 · 单位</span>
+          <div class="row-value"><input type="number" id="rPenE" value="15" min="0" step="0.01"><span class="unit">%</span></div>
+        </div>
+        <div class="row">
+          <span class="row-label">地方补充养老<span class="sub">深户由单位另缴</span></span>
+          <div class="row-value"><input type="number" id="rPenLocal" value="1" min="0" step="0.01"><span class="unit">%</span></div>
+        </div>
+        <div class="row">
+          <span class="row-label">医保一档 · 个人</span>
+          <div class="row-value"><input type="number" id="rMed1P" value="2" min="0" step="0.01"><span class="unit">%</span></div>
+        </div>
+        <div class="row">
+          <span class="row-label">医保一档 · 单位<span class="sub">含地方补充医疗</span></span>
+          <div class="row-value"><input type="number" id="rMed1E" value="5" min="0" step="0.01"><span class="unit">%</span></div>
+        </div>
+        <div class="row">
+          <span class="row-label">医保二档 · 个人</span>
+          <div class="row-value"><input type="number" id="rMed2P" value="0.5" min="0" step="0.01"><span class="unit">%</span></div>
+        </div>
+        <div class="row">
+          <span class="row-label">医保二档 · 单位</span>
+          <div class="row-value"><input type="number" id="rMed2E" value="1.5" min="0" step="0.01"><span class="unit">%</span></div>
+        </div>
+        <div class="row">
+          <span class="row-label">生育 · 单位</span>
+          <div class="row-value"><input type="number" id="rMat" value="0.45" min="0" step="0.01"><span class="unit">%</span></div>
+        </div>
+        <div class="row">
+          <span class="row-label">失业 · 个人</span>
+          <div class="row-value"><input type="number" id="rUneP" value="0.3" min="0" step="0.01"><span class="unit">%</span></div>
+        </div>
+        <div class="row">
+          <span class="row-label">失业 · 单位</span>
+          <div class="row-value"><input type="number" id="rUneE" value="0.7" min="0" step="0.01"><span class="unit">%</span></div>
+        </div>
+        <div class="row">
+          <span class="row-label">工伤 · 单位<span class="sub">按行业0.14%－1.14%浮动</span></span>
+          <div class="row-value"><input type="number" id="rInj" value="0.14" min="0" step="0.01"><span class="unit">%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="calc-btn" id="calcBtn">计算社保、个税与到手工资</button>
+
+  <!-- 结果 -->
+  <div class="result-section" id="resultSection">
+
+    <div class="result-title" style="margin-top:24px">每月个人缴费（从工资中扣除）</div>
+    <div class="card" id="resultPersonal"></div>
+
+    <div class="result-title" style="margin-top:16px">个人所得税（累计预扣法，假设全年工资不变）</div>
+    <div class="card" id="resultTax"></div>
+
+    <div class="result-title" style="margin-top:16px">全年汇总</div>
+    <div class="card" id="resultYear"></div>
+
+    <div class="result-title" style="margin-top:16px">单位缴费参考</div>
+    <div class="card" id="resultEmployer"></div>
+
+    <div class="final-claim" id="resultFinal"></div>
+
+    <p class="note" id="resultNote"></p>
+  </div>
+
+</div><!-- .container -->
+
+<script>
+// ── 个税：累计预扣预缴税率表（居民工资薪金）──
+const TAX_BRACKETS = [
+  [36000,  0.03, 0],
+  [144000, 0.10, 2520],
+  [300000, 0.20, 16920],
+  [420000, 0.25, 31920],
+  [660000, 0.30, 52920],
+  [960000, 0.35, 85920],
+  [Infinity, 0.45, 181920]
+];
+const TAX_THRESHOLD = 5000; // 每月减除费用（起征点）
+
+let hukouSZ = false;  // 是否深户
+let medTier = 1;      // 医保档次
+
+// ── 工具函数 ──
+const num = id => { const v = parseFloat(document.getElementById(id).value); return isNaN(v) || v < 0 ? 0 : v; };
+const fmt0 = n => Math.round(n).toLocaleString('zh-CN');
+const fmt2 = n => n.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const EMPTAG = '<span class="payer employer">单位</span>';
+
+function clamp(v, lo, hi) {
+  let base = v, tag = '';
+  if (hi > 0 && v > hi) { base = hi; tag = `（超上限 ${fmt0(hi)}，按上限计）`; }
+  else if (lo > 0 && v < lo) { base = lo; tag = `（低于下限 ${fmt0(lo)}，按下限计）`; }
+  return { base, tag };
+}
+
+// 累计应纳税所得额 → 累计应纳税额
+function annualTax(taxable) {
+  if (taxable <= 0) return 0;
+  for (const [cap, rate, deduct] of TAX_BRACKETS) {
+    if (taxable <= cap) return taxable * rate - deduct;
+  }
+}
+
+// ── 段控 ──
+function initSeg(id, cb) {
+  const seg = document.getElementById(id);
+  seg.querySelectorAll('.seg-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      seg.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      cb(btn.dataset.val);
+    });
+  });
+}
+initSeg('hukouSeg', val => { hukouSZ = val === 'yes'; });
+initSeg('medSeg', val => { medTier = parseInt(val); });
+
+// ── 折叠 ──
+function initCollapse(headerId, bodyId, iconId) {
+  document.getElementById(headerId).addEventListener('click', () => {
+    document.getElementById(bodyId).classList.toggle('open');
+    document.getElementById(iconId).classList.toggle('open');
+  });
+}
+initCollapse('dedHeader', 'dedBody', 'dedIcon');
+initCollapse('rateHeader', 'rateBody', 'rateIcon');
+
+// ── 回车直接计算 ──
+document.querySelectorAll('input[type=number]').forEach(el => {
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { el.blur(); document.getElementById('calcBtn').click(); }
+  });
+});
+
+// ── 计算 ──
+document.getElementById('calcBtn').addEventListener('click', () => {
+  const salary = num('salary');
+  if (salary <= 0) { alert('请先填写税前月工资'); return; }
+
+  const siBase = num('siBase') || salary;   // 社保申报基数
+  const hfBaseIn = num('hfBase') || salary; // 公积金申报基数
+  const hfRate = parseFloat(document.getElementById('hfRate').value) || 0;
+
+  const minWage = num('minWage');
+  const cityAvg = num('cityAvg');
+  const penCap = num('penCap');
+  const medFloor = cityAvg * 0.6, medCap = cityAvg * 3;
+
+  // 各险种基数（分别按上下限修正）
+  const pen = clamp(siBase, minWage, penCap);
+  const med = clamp(siBase, medFloor, medCap);
+  const une = clamp(siBase, minWage, medCap);
+  const inj = clamp(siBase, minWage, medCap);
+  const hf  = clamp(hfBaseIn, minWage, medCap);
+
+  const rMedP = medTier === 1 ? num('rMed1P') : num('rMed2P');
+  const rMedE = medTier === 1 ? num('rMed1E') : num('rMed2E');
+  const tierName = medTier === 1 ? '一档' : '二档';
+
+  // 个人缴费
+  const personal = [
+    { label: '养老保险', calc: `${fmt0(pen.base)} × ${num('rPenP')}%${pen.tag}`, amount: pen.base * num('rPenP') / 100 },
+    { label: `医疗保险（${tierName}）`, calc: `${fmt0(med.base)} × ${rMedP}%${med.tag}`, amount: med.base * rMedP / 100 },
+    { label: '失业保险', calc: `${fmt0(une.base)} × ${num('rUneP')}%${une.tag}`, amount: une.base * num('rUneP') / 100 }
+  ];
+  if (hfRate > 0) {
+    personal.push({ label: '住房公积金', calc: `${fmt0(hf.base)} × ${hfRate}%${hf.tag}`, amount: hf.base * hfRate / 100 });
+  }
+  const personalTotal = personal.reduce((s, it) => s + it.amount, 0);
+
+  // 单位缴费
+  const rPenEAll = num('rPenE') + (hukouSZ ? num('rPenLocal') : 0);
+  const employer = [
+    { label: '养老保险' + (hukouSZ ? '（含地补）' : ''), calc: `${fmt0(pen.base)} × ${rPenEAll}%`, amount: pen.base * rPenEAll / 100 },
+    { label: `医疗保险（${tierName}）`, calc: `${fmt0(med.base)} × ${rMedE}%`, amount: med.base * rMedE / 100 },
+    { label: '生育保险', calc: `${fmt0(med.base)} × ${num('rMat')}%`, amount: med.base * num('rMat') / 100 },
+    { label: '失业保险', calc: `${fmt0(une.base)} × ${num('rUneE')}%`, amount: une.base * num('rUneE') / 100 },
+    { label: '工伤保险', calc: `${fmt0(inj.base)} × ${num('rInj')}%`, amount: inj.base * num('rInj') / 100 }
+  ];
+  if (hfRate > 0) {
+    employer.push({ label: '住房公积金', calc: `${fmt0(hf.base)} × ${hfRate}%`, amount: hf.base * hfRate / 100 });
+  }
+  const employerTotal = employer.reduce((s, it) => s + it.amount, 0);
+
+  // 个税：累计预扣法（假设12个月工资、扣除均不变）
+  const extraDed = num('extraDed') + num('otherDed');
+  const monthlyTaxable = salary - TAX_THRESHOLD - personalTotal - extraDed;
+  const taxes = [];
+  let paid = 0;
+  for (let m = 1; m <= 12; m++) {
+    const cum = Math.max(0, monthlyTaxable * m);
+    const t = Math.max(0, annualTax(cum) - paid);
+    taxes.push(t);
+    paid += t;
+  }
+  const taxYear = paid;
+
+  render({ salary, personal, personalTotal, employer, employerTotal, taxes, taxYear, monthlyTaxable, extraDed });
+});
+
+function render(r) {
+  // 个人缴费
+  document.getElementById('resultPersonal').innerHTML =
+    r.personal.map(it => `<div class="result-item">
+      <span class="result-label">${it.label}<span class="calc">${it.calc}</span></span>
+      <span class="result-amount">${fmt2(it.amount)}</span>
+    </div>`).join('') +
+    `<div class="result-total"><span class="label">个人缴费合计</span><span class="amount">${fmt2(r.personalTotal)} 元/月</span></div>`;
+
+  // 个税：合并逐月相同金额
+  const groups = [];
+  r.taxes.forEach((t, i) => {
+    const last = groups[groups.length - 1];
+    if (last && Math.abs(last.amount - t) < 0.005) last.to = i + 1;
+    else groups.push({ from: i + 1, to: i + 1, amount: t });
+  });
+  let taxHtml = `<div class="result-item">
+    <span class="result-label">每月应纳税所得额<span class="calc">${fmt0(r.salary)} − 5000起征点 − ${fmt2(r.personalTotal)}社保公积金${r.extraDed > 0 ? ` − ${fmt0(r.extraDed)}扣除项` : ''}</span></span>
+    <span class="result-amount">${fmt2(Math.max(0, r.monthlyTaxable))}</span>
+  </div>`;
+  if (r.taxYear <= 0) {
+    taxHtml += `<div class="result-item">
+      <span class="result-label">未达起征点，无需缴纳个税</span>
+      <span class="result-amount">0.00</span>
+    </div>`;
+  } else {
+    taxHtml += groups.map(g => `<div class="result-item">
+      <span class="result-label">${g.from === g.to ? `第 ${g.from} 个月` : `第 ${g.from}－${g.to} 个月`}<span class="calc">累计预扣，税率随累计所得进档</span></span>
+      <span class="result-amount">${fmt2(g.amount)} / 月</span>
+    </div>`).join('');
+  }
+  taxHtml += `<div class="result-total"><span class="label">全年个税合计</span><span class="amount">${fmt2(r.taxYear)} 元</span></div>`;
+  document.getElementById('resultTax').innerHTML = taxHtml;
+
+  // 全年汇总
+  const yearGross = r.salary * 12;
+  const yearPersonal = r.personalTotal * 12;
+  const yearNet = yearGross - yearPersonal - r.taxYear;
+  document.getElementById('resultYear').innerHTML = `
+    <div class="result-item"><span class="result-label">全年税前收入</span><span class="result-amount">${fmt2(yearGross)}</span></div>
+    <div class="result-item"><span class="result-label">全年个人社保公积金</span><span class="result-amount">− ${fmt2(yearPersonal)}</span></div>
+    <div class="result-item"><span class="result-label">全年个人所得税</span><span class="result-amount">− ${fmt2(r.taxYear)}</span></div>
+    <div class="result-total"><span class="label">全年到手合计</span><span class="amount">${fmt2(yearNet)} 元</span></div>`;
+
+  // 单位缴费
+  document.getElementById('resultEmployer').innerHTML =
+    r.employer.map(it => `<div class="result-item">
+      <span class="result-label">${it.label}${EMPTAG}<span class="calc">${it.calc}</span></span>
+      <span class="result-amount">${fmt2(it.amount)}</span>
+    </div>`).join('') +
+    `<div class="result-item">
+      <span class="result-label">单位月用工成本<span class="calc">税前工资 + 单位缴费</span></span>
+      <span class="result-amount">${fmt2(r.salary + r.employerTotal)}</span>
+    </div>` +
+    `<div class="result-total"><span class="label">单位缴费合计</span><span class="amount">${fmt2(r.employerTotal)} 元/月</span></div>`;
+
+  // 月均到手
+  document.getElementById('resultFinal').innerHTML =
+    `<span class="label">月均到手工资</span><span class="amount">${fmt2(yearNet / 12)} 元</span>`;
+
+  document.getElementById('resultNote').innerHTML =
+    `<b>说明：</b>个税按居民工资薪金累计预扣预缴计算，假设全年 12 个月工资与扣除项不变，年初入职、年中调薪或有年终奖时逐月金额会不同，最终以次年个税汇算清缴为准。<br>` +
+    `社保公积金费率与基数上下限为深圳参考值，每年 7 月随社平工资调整，且可能有阶段性降费政策，可在"费率与基准"中修改后重新计算。本结果仅供参考。`;
+
+  document.getElementById('resultSection').classList.add('show');
+  document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+</body>
+</html>

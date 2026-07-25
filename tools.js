@@ -33,6 +33,12 @@ window.TOOLS = [
     icon: '<path d="M12 3l7 3v5c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/><path d="M9 11.5l2 2 4-4.5"/>'
   },
   {
+    name: '工资计算器',
+    desc: '五险一金 · 个税 · 到手工资',
+    url: 'https://xujia521.github.io/gongzi/',
+    icon: '<circle cx="12" cy="12" r="8.5"/><path d="M9.5 8.5l2.5 3.5 2.5-3.5M12 12v4.5M9.8 13.2h4.4"/>'
+  },
+  {
     name: '长截图裁剪',
     desc: '证据打印分页',
     url: 'https://xujia521.github.io/caijian/',
