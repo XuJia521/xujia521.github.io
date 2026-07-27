@@ -1,5 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+// 图标生成脚本：node generate-icons.mjs
+// 由一份天平图形生成三种变体（圆角 / 满幅 / maskable），再用 sharp 输出各尺寸 PNG
+import sharp from 'sharp';
+import { writeFileSync } from 'fs';
 
+// 渐变、滤镜等公共定义
+const DEFS = `
   <defs>
     <!-- 背景：祖母绿对角渐变 -->
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -42,11 +47,10 @@
     <filter id="shadow" x="-20%" y="-15%" width="140%" height="140%">
       <feDropShadow dx="0" dy="7" stdDeviation="9" flood-color="#03110a" flood-opacity="0.5"/>
     </filter>
-  </defs>
-  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-  <rect width="512" height="512" rx="112" fill="url(#bgGlow)"/>
-  <rect width="512" height="512" rx="112" fill="url(#haloGlow)"/>
+  </defs>`;
 
+// 天平主体（512 视野，中轴 x=256）
+const SCALES = `
   <g filter="url(#shadow)">
     <!-- 顶部圆球 -->
     <circle cx="256" cy="100" r="17" fill="url(#gold)"/>
@@ -87,7 +91,49 @@
     <rect x="206" y="380" width="100" height="5" rx="2.5" fill="url(#goldHi)" opacity="0.5"/>
     <rect x="178" y="393" width="156" height="19" rx="8" fill="url(#gold)"/>
     <rect x="178" y="393" width="156" height="6" rx="3" fill="url(#goldHi)" opacity="0.45"/>
-  </g>
-  <rect width="512" height="512" rx="112" fill="url(#vignette)"/>
-<rect x="7" y="7" width="498" height="498" rx="105" fill="none" stroke="#f0c460" stroke-opacity="0.22" stroke-width="3"/>
+  </g>`;
+
+// variant: 'rounded' 圆角（favicon / any 图标）
+//          'full'    满幅方形（apple-touch-icon，iOS 自行裁圆角）
+//          'mask'    满幅 + 主体缩进安全区（maskable）
+function buildSvg(variant) {
+  const rx = variant === 'rounded' ? 112 : 0;
+  const motif = variant === 'mask'
+    ? `<g transform="translate(56.32 56.32) scale(0.78)">${SCALES}</g>`
+    : SCALES;
+  // 圆角版内侧加一圈金色细边；满幅版四角会被系统裁掉，不加
+  const rim = variant === 'rounded'
+    ? `<rect x="7" y="7" width="498" height="498" rx="105" fill="none" stroke="#f0c460" stroke-opacity="0.22" stroke-width="3"/>`
+    : '';
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+${DEFS}
+  <rect width="512" height="512" rx="${rx}" fill="url(#bg)"/>
+  <rect width="512" height="512" rx="${rx}" fill="url(#bgGlow)"/>
+  <rect width="512" height="512" rx="${rx}" fill="url(#haloGlow)"/>
+${motif}
+  <rect width="512" height="512" rx="${rx}" fill="url(#vignette)"/>
+${rim}
 </svg>
+`;
+}
+
+const rounded = buildSvg('rounded');
+const full = buildSvg('full');
+const mask = buildSvg('mask');
+
+writeFileSync('icon.svg', rounded);
+
+const jobs = [
+  [rounded, 512, 'icon-512.png'],
+  [rounded, 192, 'icon-192.png'],
+  [rounded, 32, 'favicon-32.png'],
+  [rounded, 16, 'favicon-16.png'],
+  [full, 180, 'apple-touch-icon.png'],
+  [mask, 512, 'icon-maskable-512.png'],
+  [mask, 192, 'icon-maskable-192.png'],
+];
+
+for (const [svg, size, file] of jobs) {
+  await sharp(Buffer.from(svg), { density: 300 }).resize(size, size).png().toFile(file);
+  console.log('生成', file);
+}
