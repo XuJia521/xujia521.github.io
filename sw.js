@@ -1,5 +1,5 @@
 // Service Worker - 离线缓存
-const CACHE_NAME = 'xujia-legal-tools-v11';
+const CACHE_NAME = 'xujia-legal-tools-v12';
 const ASSETS = [
   './',
   './index.html',
@@ -18,7 +18,8 @@ const ASSETS = [
   './icon-192.png',
   './icon-512.png',
   './apple-touch-icon.png',
-  './favicon-32.png'
+  './favicon-32.png',
+  './favicon-16.png'
 ];
 
 // 安装：预缓存主页资源
