@@ -1,6 +1,6 @@
 # 法律工具集
 
-徐嘉律师的个人法律工具集，部署于 GitHub Pages：<https://xujia521.github.io>
+徐嘉律师的个人法律工具集，部署于 GitHub Pages：<https://lawnode020.github.io>
 
 纯静态页面，无后端、无统计、无广告，所有数据只保存在使用者自己的浏览器里。
 
@@ -9,13 +9,13 @@
 | 工具 | 说明 | 代码位置 |
 | --- | --- | --- |
 | 案件管理 | 在办案件台账、跟进日期、一键拨打承办人电话 | 本仓库 `case-manager/` |
-| 利息计算器 | 计算逾期利息 | [lixi](https://github.com/XuJia521/lixi) 仓库 |
-| 加班费计算器 | 工作日 / 休息日 / 法定假 | [overtime-pay-calculator](https://github.com/XuJia521/overtime-pay-calculator) 仓库 |
+| 利息计算器 | 计算逾期利息 | [lixi](https://github.com/lawnode020/lixi) 仓库 |
+| 加班费计算器 | 工作日 / 休息日 / 法定假 | [overtime-pay-calculator](https://github.com/lawnode020/overtime-pay-calculator) 仓库 |
 | 工伤赔偿计算器 | 深圳 · 伤残1-10级及治疗期待遇 | 本仓库 `gongshang/` |
 | 工资计算器 | 五险一金、个税（累计预扣）、到手工资 | 本仓库 `gongzi/` |
-| 长截图裁剪 | 证据打印分页 | [caijian](https://github.com/XuJia521/caijian) 仓库 |
-| 便签 | 轻量记录 | [bianqian](https://github.com/XuJia521/bianqian) 仓库 |
-| 诉讼费用计算 | 多项费用汇总 | [fee](https://github.com/XuJia521/fee) 仓库 |
+| 长截图裁剪 | 证据打印分页 | [caijian](https://github.com/lawnode020/caijian) 仓库 |
+| 便签 | 轻量记录 | [bianqian](https://github.com/lawnode020/bianqian) 仓库 |
+| 诉讼费用计算 | 多项费用汇总 | [fee](https://github.com/lawnode020/fee) 仓库 |
 
 ## 目录结构
 
@@ -40,6 +40,6 @@ pgh/                                           彭高红版首页（共用 tools
 
 ### 怎么确认改动有没有上线
 
-- **PR 是否已合并**：PR 页面顶部显示紫色 `Merged` 标志即已合并；绿色 `Open` 表示还没合并；[全部 PR 列表](https://github.com/XuJia521/xujia521.github.io/pulls?q=is%3Apr)
-- **main 是否包含某次修改**：看[提交历史](https://github.com/XuJia521/xujia521.github.io/commits/main)，最近的合并记录都在最上面
+- **PR 是否已合并**：PR 页面顶部显示紫色 `Merged` 标志即已合并；绿色 `Open` 表示还没合并；[全部 PR 列表](https://github.com/lawnode020/lawnode020.github.io/pulls?q=is%3Apr)
+- **main 是否包含某次修改**：看[提交历史](https://github.com/lawnode020/lawnode020.github.io/commits/main)，最近的合并记录都在最上面
 - **线上是否已更新**：合并 1～2 分钟后强制刷新页面（手机上可清一次浏览器缓存）；因为有离线缓存，已安装的 PWA 可能要打开两次才会显示新版本
