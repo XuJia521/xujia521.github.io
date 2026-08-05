@@ -1,6 +1,6 @@
 # 项目说明
 
-个人法律工具集网站，部署于 GitHub Pages（xujia521.github.io）。
+个人法律工具集网站，部署于 GitHub Pages（lawnode020.github.io）。
 
 ## Git 规范
 
